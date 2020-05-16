@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Gestion des serveurs{% endblock title %}
 
@@ -16,7 +17,7 @@
         </button>
     </div>
     {% endif %}
-    <div class="card-deck">
+    <div class="row row-cols-4">
         {% if servers %}
             {% for server in servers %}
                 {% include 'main/components/server_card.html' %}

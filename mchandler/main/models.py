@@ -52,4 +52,4 @@ class Server(models.Model):
         if bool(self.image):
             return self.image.url
         else:
-            return 'default image'
+            return False

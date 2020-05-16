@@ -1,9 +1,21 @@
+{% load static %}
 <div class="card">
+    {% if server.get_image %}
     <img src="{{ server.get_image }}" class="card-img-top" alt="Server icon">
+    {% else %}
+    <img src="{% static 'img/default_favicon.jpeg' %}" class="card-img-top" alt="Server icon">
+    {% endif %}
     <div class="card-body">
         <h5 class="card-title">{{ server.name }}</h5>
         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
             content.</p>
         <a href="{% url 'edit' server.pk %}" class="btn btn-primary">Editer</a>
+    </div>
+    <div class="card-footer">
+        {% if True %}
+        <small class="text-muted"><img src="{% static 'img/started.svg' %}" alt="Status" style="width: 1em; heigth: 1em;"> Démarré</small>
+        {% else %}
+        <small class="text-muted"><img src="{% static 'img/stopped.svg' %}" alt="Status" style="width: 1em; heigth: 1em;"> Eteint</small>
+        {% endif %}
     </div>
 </div>

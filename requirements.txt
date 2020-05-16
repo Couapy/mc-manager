@@ -1,1 +1,3 @@
+django
 django-forms-bootstrap
+social-auth-app-django
