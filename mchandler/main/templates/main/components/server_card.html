@@ -1,0 +1,9 @@
+<div class="card">
+    <img src="{{ server.get_image }}" class="card-img-top" alt="Server icon">
+    <div class="card-body">
+        <h5 class="card-title">{{ server.name }}</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+            content.</p>
+        <a href="{% url 'edit' server.pk %}" class="btn btn-primary">Editer</a>
+    </div>
+</div>

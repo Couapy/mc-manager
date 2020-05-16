@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load bootstrap_tags %}
+
+{% block title %}Ajouter un serveur{% endblock title %}
+
+{% block head %}{% endblock head %}
+
+{% block content %}
+    <div class="pb-3">
+        <a href="{% url 'manage' %}" class="btn btn-primary">← Retour</a>
+    </div>
+    {% if create_success %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Le serveur a bien été créé.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    {% if success %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Les modifications ont bien été enregistrées.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    <form action="{% url 'edit' server.pk %}" method="POST">
+        {% csrf_token %}
+        {{ form|as_bootstrap }}
+        <input type="submit" value="Enregistrer" class="btn btn-success">
+        <a href="{% url 'delete' server.pk %}" class="btn btn-danger float-right" onclick="confirm('Etes-vous sûrs de vouloir supprimer ce serveur ?')">
+            Supprimer le serveur
+        </a>
+    </form>
+{% endblock content %}

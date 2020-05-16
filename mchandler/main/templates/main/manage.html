@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion des serveurs{% endblock title %}
+
+{% block head %}{% endblock head %}
+
+{% block content %}
+    <div class="text-right pb-3">
+        <a href="{% url 'add' %}" class="btn btn-primary">+ Ajouter un serveur</a>
+    </div>
+    {% if delete_success %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Le serveur a bien été supprimé.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    <div class="card-deck">
+        {% if servers %}
+            {% for server in servers %}
+                {% include 'main/components/server_card.html' %}
+            {% endfor %}
+        {% else %}
+            <p>Vous ne possédez aucun serveur.</p>
+        {% endif %}
+    </div>
+{% endblock content %}
