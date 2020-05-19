@@ -88,12 +88,13 @@ class Server(models.Model):
                     + "{self.pk} 256M 4G {port}"
                 )
                 os.system("sudo systemctl start minecraft@" + str(self.pk))
-            return
+                self.port = port
+                self.save()
+                return
 
     def stop(self):
         """Stop the service."""
-        command = "sudo systemctl stop minecraft@" + str(self.pk)
-        os.system(command)
+        os.system("sudo systemctl stop minecraft@" + str(self.pk))
 
     def save(self, *args, **kwargs):
         new = self.pk is None
