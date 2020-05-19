@@ -7,7 +7,6 @@ class ServerForm(forms.ModelForm):
         model = Server
         fields = [
             "name",
-            "port",
             "version",
             "description",
             "image",

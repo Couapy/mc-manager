@@ -2,14 +2,21 @@ import os
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.conf import settings
 
 
-version_availables = [
-    ('1.15.0', '1.15.0'),
-    ('1.15.1', '1.15.1'),
-    ('1.15.2', '1.15.2'),
-]
+def get_version_availables():
+    servers = os.listdir('/opt/minecraft/servers/')
+    versions = []
+    for server in servers:
+        (filename, ext) = os.path.splitext(server)
+        versions.append(
+            (server, filename)
+        )
+    return versions
 
+
+versions_availables = get_version_availables()
 ports_availables = [
     25565,
     25564,
@@ -32,7 +39,7 @@ class Server(models.Model):
     port = models.IntegerField(
         verbose_name="Port",
         null=True,
-        blank=True,        
+        blank=True,
     )
     owner = models.ForeignKey(
         User,
@@ -47,8 +54,8 @@ class Server(models.Model):
     )
     version = models.CharField(
         verbose_name="Version",
-        max_length=6,
-        choices=version_availables,
+        max_length=32,
+        choices=versions_availables,
         default='1.15.2',
     )
     image = models.ImageField(
@@ -68,49 +75,37 @@ class Server(models.Model):
         command = 'systemctl status minecraft@' + str(self.pk)
         res = os.popen(command).read()
         if res.find('Active: active') != -1:
-            return True
+            return 2
+        elif res.find('Active: activating') != -1:
+            return 1
         else:
-            return False
-
-    def set_port_available(self):
-        for port in ports_availables:
-            listen = os.popen("netstat -ltunp | grep 25563").read()
-            if len(listen) == 0:
-                # Mettre le port dans server.conf
-                command = f'cat /opt/minecraft/{self.pk}/server.conf | egrep - v "^(PORT=)"'
-                conf = os.popen(command).read()
-                conf += "\nPORT=" + str(port)
-                with open(f"/opt/minecraft/{self.pk}/server.conf", "w+") as file:
-                    file.write(conf)
-                return True
-        return False
+            return 0
 
     def start(self):
         """Start the service."""
-        self.set_port_available()
-        command = 'systemctl start minecraft@' + str(self.pk)
-        # os.popen(command).read()
+        for port in ports_availables:
+            listen = os.popen("netstat -ltunp | grep 25563").read()
+            if len(listen) == 0:
+                os.system(
+                    "sudo -u minecraft sh {settings.BASE_DIR}/main/scripts/config.sh "
+                    + "{self.pk} 256M 4G {port}"
+                )
+                os.system("sudo systemctl start minecraft@" + str(self.pk))
+            return
 
     def stop(self):
         """Stop the service."""
-        command = 'systemctl stop minecraft@' + str(self.pk)
-        os.popen(command).read()
+        command = "sudo systemctl stop minecraft@" + str(self.pk)
+        os.system(command)
 
     def save(self, *args, **kwargs):
         new = self.pk is None
         super().save(*args, **kwargs)
         if new:
-            # New object
-            # create dir
-            os.mkdir(f"/opt/minecraft/{self.pk}/")
-            # copy server
-            os.system(f"cp -f /opt/minecraft/servers/{self.version}.jar /opt/minecraft/{self.pk}/minecraft_server.jar")
-            # set eula
-            os.system(f"echo eula=true > /opt/minecraft/{self.pk}/eula.txt")
-            # change permissions
-            os.system(f"chown minecraft:minecraft -R /opt/minecraft/{self.pk}")
+            command = "sudo -u minecraft "
+            command += f"sh {settings.BASE_DIR}/main/scripts/new.sh {self.pk} {self.version}"
+            os.system(command)
         else:
-            # Update object
             pass
 
     def delete(self, *args, **kwargs):

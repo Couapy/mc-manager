@@ -1,12 +1,12 @@
 import os
 import configparser
 
-config = configparser.ConfigParser()
-config.read('config.cfg')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+config = configparser.ConfigParser()
+config.read(BASE_DIR + "/config.cfg")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -129,6 +129,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+# Login redirect
+LOGIN_URL = "/account/login/"
+LOGIN_REDIRECT_URL = "/account/login/"
 
 # OAuth authentication
 # https://python-social-auth-docs.readthedocs.io/en/latest/backends/google.html
