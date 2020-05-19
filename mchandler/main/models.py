@@ -81,7 +81,7 @@ class Server(models.Model):
     def start(self):
         """Start the service."""
         for port in ports_availables:
-            listen = os.popen("netstat -ltunp | grep 25563").read()
+            listen = os.popen(f"netstat -ltun | grep {port}").read()
             if len(listen) == 0:
                 os.system(
                     f"sudo -u minecraft sh {settings.BASE_DIR}/main/scripts/config.sh "
@@ -90,7 +90,7 @@ class Server(models.Model):
                 os.system("sudo systemctl start minecraft@" + str(self.pk))
                 self.port = port
                 self.save()
-                return
+                break
 
     def stop(self):
         """Stop the service."""
