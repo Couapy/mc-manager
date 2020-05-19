@@ -7,9 +7,9 @@
 
 {% block content %}
     <div class="pb-3">
-        <a href="{% url 'manage' %}" class="btn btn-primary">← Retour</a>
+        <a href="{% url 'main:manage' %}" class="btn btn-primary">← Retour</a>
     </div>
-    <form action="{% url 'add' %}" method="POST">
+    <form action="{% url 'main:add' %}" method="POST">
         {% csrf_token %}
         {{ valid }}
         {{ form|as_bootstrap }}

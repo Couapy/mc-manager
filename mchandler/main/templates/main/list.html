@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des serveurs plublics{% endblock title %}
+
+{% block head %}{% endblock head %}
+
+{% block content %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+        {% if servers %}
+            {% for server in servers %}
+                {% include 'main/components/server_card.html' %}
+            {% endfor %}
+        {% else %}
+            <p>Aucun serveur n'a été trouvé.</p>
+        {% endif %}
+    </div>
+{% endblock content %}

@@ -7,7 +7,7 @@
 
 {% block content %}
     <div class="pb-3">
-        <a href="{% url 'manage' %}" class="btn btn-primary">← Retour</a>
+        <a href="{% url 'main:manage' %}" class="btn btn-primary">← Retour</a>
     </div>
     {% if create_success %}
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -25,11 +25,11 @@
         </button>
     </div>
     {% endif %}
-    <form action="{% url 'edit' server.pk %}" method="POST">
+    <form action="{% url 'main:edit' server.pk %}" method="POST">
         {% csrf_token %}
         {{ form|as_bootstrap }}
         <input type="submit" value="Enregistrer" class="btn btn-success">
-        <a href="{% url 'delete' server.pk %}" class="btn btn-danger float-right" onclick="confirm('Etes-vous sûrs de vouloir supprimer ce serveur ?')">
+        <a href="{% url 'main:delete' server.pk %}" class="btn btn-danger float-right" onclick="confirm('Etes-vous sûrs de vouloir supprimer ce serveur ?')">
             Supprimer le serveur
         </a>
     </form>

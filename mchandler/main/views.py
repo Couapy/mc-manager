@@ -13,8 +13,10 @@ def index(request):
 
 
 def public_servers(request):
-    context = {}
-    return render(request, 'main/index.html', context)
+    context = {
+        'servers': Server.objects.filter(public=True)
+    }
+    return render(request, 'main/list.html', context)
 
 
 @login_required
@@ -23,6 +25,8 @@ def manage(request):
     context = {
         'servers': servers,
         'delete_success': 'delete' in request.GET,
+        'start_success': 'start' in request.GET,
+        'stop_success': 'stop' in request.GET,
     }
     return render(request, 'main/manage.html', context)
 
@@ -39,7 +43,7 @@ def add(request):
         new_server = form.save()
         new_server.owner = request.user
         new_server.save()
-        return HttpResponseRedirect(reverse('edit', args=[new_server.pk]) + "?create=1")
+        return HttpResponseRedirect(reverse('main:edit', args=[new_server.pk]) + "?create=1")
 
     context = {
         'form': form,
@@ -74,4 +78,20 @@ def edit(request, id):
 def delete(request, id):
     server = get_object_or_404(Server, pk=id)
     server.delete()
-    return HttpResponseRedirect(reverse('manage') + "?delete=1")
+    return HttpResponseRedirect(reverse('main:manage') + "?delete=1")
+
+
+@login_required
+def start(request, id):
+    server = get_object_or_404(Server, pk=id)
+    if server.owner == request.user:
+        server.start()
+    return HttpResponseRedirect(reverse('main:manage') + "?start=1")
+
+
+@login_required
+def stop(request, id):
+    server = get_object_or_404(Server, pk=id)
+    if server.owner is request.user:
+        server.stop()
+    return HttpResponseRedirect(reverse('main:manage') + "?stop=1")

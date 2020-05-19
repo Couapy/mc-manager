@@ -1,19 +1,36 @@
 {
-    // Utilisez IntelliSense pour en savoir plus sur les attributs possibles.
-    // Pointez pour afficher la description des attributs existants.
-    // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python : Django",
+            "name": "Python : Fichier actuel",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Django",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/mchandler/manage.py",
+            "console": "integratedTerminal",
             "args": [
                 "runserver",
-                "--noreload"
+                "--nothreading"
             ],
-            "django": true
-        }
+            "django": true,
+            "subProcess": true
+        },
+        {
+            "name": "Python: Django tests",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/mchandler/manage.py",
+            "console": "integratedTerminal",
+            "args": [
+                "test",
+            ],
+            "django": true,
+        },
     ]
 }

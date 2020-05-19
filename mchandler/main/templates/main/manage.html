@@ -7,7 +7,7 @@
 
 {% block content %}
     <div class="text-right pb-3">
-        <a href="{% url 'add' %}" class="btn btn-primary">+ Ajouter un serveur</a>
+        <a href="{% url 'main:add' %}" class="btn btn-primary">+ Ajouter un serveur</a>
     </div>
     {% if delete_success %}
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -17,7 +17,23 @@
         </button>
     </div>
     {% endif %}
-    <div class="row row-cols-4">
+    {% if start_success %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Le serveur va bientôt démarrer.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    {% if stop_success %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Le serveur va bientôt s'éteindre.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
         {% if servers %}
             {% for server in servers %}
                 {% include 'main/components/server_card.html' %}

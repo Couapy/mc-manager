@@ -4,8 +4,16 @@
 
 {% block head %}{% endblock head %}
 
-{% block body %}
-    <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam nostrum cupiditate laudantium deserunt asperiores magni aspernatur nisi adipisci, harum magnam. Quibusdam quod nulla, sit beatae a tempore ratione sapiente magnam.
-    </p>
-{% endblock body %}
+{% block content %}
+    <div class="jumbotron">
+        <h1 class="display-4">Bienvenue sur le gestionnaire de serveurs Minecraft</h1>
+        <p class="lead">
+            Vous pouvez créer des serveurs Minecraft lorsque vous en avez besoin juste ici !
+        </p>
+        <hr class="my-4">
+        <p>
+            Il n'y a qu'une seule règle : éteindre le serveur lorsque vous n'en avez plus besoin.
+        </p>
+        <a class="btn btn-primary btn-lg" href="{% url 'main:public-servers' %}" role="button">Parcourir les serveurs publics</a>
+    </div>
+{% endblock content %}

@@ -2,6 +2,8 @@ from django.urls import path
 
 from . import views
 
+
+app_name = "main"
 urlpatterns = [
     path('', views.index, name='index'),
     path('public-servers/', views.public_servers, name="public-servers"),
@@ -9,4 +11,6 @@ urlpatterns = [
     path('server/add/', views.add, name="add"),
     path('server/<int:id>/edit/', views.edit, name="edit"),
     path('server/<int:id>/delete/', views.delete, name="delete"),
+    path('server/<int:id>/start/', views.start, name="start"),
+    path('server/<int:id>/stop/', views.stop, name="stop"),
 ]
