@@ -85,7 +85,7 @@ class Server(models.Model):
             if len(listen) == 0:
                 os.system(
                     f"sudo -u minecraft sh {settings.BASE_DIR}/main/scripts/config.sh "
-                    + "{self.pk} 256M 4G {port}"
+                    + f"{self.pk} 256M 4G {port}"
                 )
                 os.system("sudo systemctl start minecraft@" + str(self.pk))
                 self.port = port
