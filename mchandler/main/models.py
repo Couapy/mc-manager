@@ -84,7 +84,7 @@ class Server(models.Model):
             listen = os.popen("netstat -ltunp | grep 25563").read()
             if len(listen) == 0:
                 os.system(
-                    "sudo -u minecraft sh {settings.BASE_DIR}/main/scripts/config.sh "
+                    f"sudo -u minecraft sh {settings.BASE_DIR}/main/scripts/config.sh "
                     + "{self.pk} 256M 4G {port}"
                 )
                 os.system("sudo systemctl start minecraft@" + str(self.pk))

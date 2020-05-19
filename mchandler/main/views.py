@@ -92,6 +92,6 @@ def start(request, id):
 @login_required
 def stop(request, id):
     server = get_object_or_404(Server, pk=id)
-    if server.owner is request.user:
+    if server.owner == request.user:
         server.stop()
     return HttpResponseRedirect(reverse('main:manage') + "?stop=1")
