@@ -5,18 +5,16 @@ from django.db import models
 from django.conf import settings
 
 
-def get_version_availables():
+def get_versions_availables():
     servers = os.listdir('/opt/minecraft/servers/')
     versions = []
     for server in servers:
         (filename, ext) = os.path.splitext(server)
-        versions.append(
-            (server, filename)
-        )
+        versions.append((server, filename))
     return versions
 
 
-versions_availables = get_version_availables()
+versions_availables = get_versions_availables()
 ports_availables = [
     25565,
     25564,
@@ -56,7 +54,6 @@ class Server(models.Model):
         verbose_name="Version",
         max_length=32,
         choices=versions_availables,
-        default='1.15.2',
     )
     image = models.ImageField(
         verbose_name="Icone",
