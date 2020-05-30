@@ -1,7 +1,6 @@
 import os
 import configparser
 
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -19,6 +18,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config.get("EMAIL", "EMAIL_HOST")
+EMAIL_PORT = config.get("EMAIL", "EMAIL_PORT")
+EMAIL_HOST_USER = config.get("EMAIL", "EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config.get("EMAIL", "EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = config.get("EMAIL", "EMAIL_USE_TLS")
+EMAIL_USE_TLS = config.get("EMAIL", "EMAIL_USE_SSL")
+DEFAULT_FROM_EMAIL = config.get("EMAIL", "DEFAULT_FROM_EMAIL")
 
 # Application definition
 
@@ -31,12 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Dependencies
-    'django_forms_bootstrap',
     'social_django',
-
-    # My apps
+    'crispy_forms',
+    'accounts',
     'main',
-    'account',
 ]
 
 MIDDLEWARE = [
@@ -47,8 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'social_django.middleware.SocialAuthExceptionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 ]
 
 ROOT_URLCONF = 'mchandler.urls'
@@ -56,7 +61,9 @@ ROOT_URLCONF = 'mchandler.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [(os.path.join(BASE_DIR, 'templates')), ],
+        'DIRS': [
+            (os.path.join(BASE_DIR, 'mchandler/templates')),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -64,9 +71,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # Social Django templates
-                "social_django.context_processors.backends",
-                "social_django.context_processors.login_redirect",
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -118,41 +124,42 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'mchandler/static/')
 
 
 # Media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mchandler/media/')
 
-# Login redirect
-LOGIN_URL = "/account/login/"
-LOGIN_REDIRECT_URL = "/account/login/"
+
+# Forms
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # OAuth authentication
-# https://python-social-auth-docs.readthedocs.io/en/latest/backends/google.html
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.facebook.FacebookOAuth2',
+)
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config.get("GOOGLE", "KEY")
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config.get("GOOGLE", "SECRET")
 SOCIAL_AUTH_GITHUB_KEY = config.get("GITHUB", "KEY")
 SOCIAL_AUTH_GITHUB_SECRET = config.get("GITHUB", "SECRET")
+SOCIAL_AUTH_TWITTER_KEY = config.get("TWITTER", "KEY")
+SOCIAL_AUTH_TWITTER_SECRET = config.get("TWITTER", "SECRET")
+SOCIAL_AUTH_FACEBOOK_KEY = config.get("FACEBOOK", "KEY")
+SOCIAL_AUTH_FACEBOOK_SECRET = config.get("FACEBOOK", "SECRET")
 
-AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.github.GithubOAuth2',
-    # 'social_core.backends.twitter.TwitterOAuth',
-    # 'social_core.backends.facebook.FacebookOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
-)
-
-LOGIN_REDIRECT_URL = "/manage/"
+LOGIN_REDIRECT_URL = "/accounts/profile/"
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
-AUTH_PROFILE_MODULE = 'account.Profile'
+AUTH_PROFILE_MODULE = 'accounts.Profile'
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
@@ -166,6 +173,6 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
 )
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/account/profile/'
-SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/account/profile/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/accounts/profile/'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/accounts/profile/'
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/'

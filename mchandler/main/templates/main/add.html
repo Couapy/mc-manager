@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load bootstrap_tags %}
+{% load crispy_forms_tags%}
 
 {% block title %}Ajouter un serveur{% endblock title %}
 
@@ -9,10 +9,7 @@
     <div class="pb-3">
         <a href="{% url 'main:manage' %}" class="btn btn-primary">← Retour</a>
     </div>
-    <form action="{% url 'main:add' %}" method="POST">
-        {% csrf_token %}
-        {{ valid }}
-        {{ form|as_bootstrap }}
-        <input type="submit" value="Enregistrer" class="btn btn-success">
-    </form>
+    <div class="mb-4">
+        {% crispy form %}
+    </div>
 {% endblock content %}

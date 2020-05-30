@@ -8,7 +8,10 @@
         {% endif %}
         <div class="card-body">
             <h5 class="card-title">{{ server.name }}</h5>
-            <p class="card-text">{{ server.description }}</p>
+            <p class="card-text">
+                {{ server.description }}<br>
+                <small>Version : {{ server.version }}</small>
+            </p>
             {% if user == server.owner %}
             <a href="{% url 'main:edit' server.pk %}" class="btn btn-primary">Editer</a>
             {% if server.get_status %}

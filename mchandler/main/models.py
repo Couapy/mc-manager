@@ -3,6 +3,8 @@ import os
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 def get_versions_availables():
@@ -22,7 +24,6 @@ ports_availables = [
 ]
 
 
-# Create your models here.
 class Server(models.Model):
     """This is the model for a server."""
 
@@ -110,3 +111,121 @@ class Server(models.Model):
         self.stop()
         os.system(f"rm -rf /opt/minecraft/{self.pk}")
         super().delete(*args, **kwargs)
+
+
+class ServerProperties(models.Model):
+    """server.properties"""
+
+    server = models.OneToOneField(
+        to=Server,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    max_players = models.IntegerField(
+        verbose_name="Maximum de joueurs",
+        default=5,
+    )
+    view_distance = models.IntegerField(
+        verbose_name="Distance de rendu (en chunck)",
+        default=10,
+    )
+    level_seed = models.CharField(
+        verbose_name="Seed du monde",
+        max_length=128,
+        null=True,
+        blank=True,
+    )
+    gamemode = models.CharField(
+        verbose_name="Mode de jeu",
+        max_length=9,
+        choices=[
+            ('survival', 'Survie'),
+            ('creative', 'Creatif'),
+            ('spectator', 'Spectateur'),
+        ],
+        default='survival',
+    )
+    difficulty = models.CharField(
+        verbose_name="Difficulté",
+        max_length=8,
+        choices=[
+            ('peaceful', 'Paisible'),
+            ('easy', 'Facile'),
+            ('normal', 'Normale'),
+            ('hard', 'Difficile'),
+        ],
+        default='normal',
+    )
+    level_name = models.CharField(
+        verbose_name="Nom du monde",
+        max_length=16,
+        default='world',
+    )
+    motd = models.TextField(
+        verbose_name="Description du serveur",
+        max_length=300,
+        default="A Minecraft Server"
+    )
+    spawn_protection = models.IntegerField(
+        verbose_name="Protection du spawn (en block)",
+        default=0,
+    )
+    hardcore = models.BooleanField(
+        verbose_name="Hardcore",
+        default=False,
+    )
+    pvp = models.BooleanField(
+        verbose_name="PVP",
+        default=True,
+    )
+    generate_structures = models.BooleanField(
+        verbose_name="Générer des structures",
+        default=True,
+    )
+    spawn_npcs = models.BooleanField(
+        verbose_name="Villageois",
+        default=True,
+    )
+    spawn_animals = models.BooleanField(
+        verbose_name="Animaux",
+        default=True,
+    )
+    spawn_monsters = models.BooleanField(
+        verbose_name="Monstres",
+        default=True,
+    )
+    enforce_whitelist = models.BooleanField(
+        verbose_name="Activer la liste blanche",
+        default=False,
+    )
+    online_mode = models.BooleanField(
+        verbose_name="Autoriser seulement les comptes légaux",
+        default=True,
+    )
+    enable_command_block = models.BooleanField(
+        verbose_name="Activer les command blocks",
+        default=False,
+    )
+
+    @property
+    def properties(self):
+        file_name = f"/opt/minecraft/{self.pk}/server.properties"
+        try:
+            with open(file_name, "r") as properties_file:
+                return properties_file.read()
+        except Exception:
+            return ""
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Update the server.properties
+        # Restart the server if it is started
+
+
+@receiver(post_save, sender=Server)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        ServerProperties.objects.create(
+            server=instance,
+        )

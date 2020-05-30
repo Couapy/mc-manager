@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Django-Template{% endblock title %}
+
+{% block content %}
+    <h1>Introduction</h1>
+    <div class="jumbotron">
+        <h1 class="display-4">Bienvenue sur Django-Template</h1>
+        <p class="lead">
+            Ce template est prévu pour que vous puissiez démarrer rapidement votre projet sans que vous deviez coder autre chose
+            que votre projet en lui même.
+        </p>
+        <hr class="my-4">
+        <p>
+            Alors profitez des fonctionnalités suivantes pour démarrer sereinement :
+            <ul>
+                <li>Système d'authentifications
+                    <ul>
+                        <li>Compte local
+                            <ul>
+                                <li>Création de compte</li>
+                                <li>Mot de passe oublié</li>
+                            </ul>
+                        </li>
+                        <li>Compte externe
+                            <ul>
+                                <li>Google</li>
+                                <li>GitHub</li>
+                                <li>Twitter</li>
+                                <li>Facebook</li>
+                            </ul>
+                        </li>
+                        <li>Modification du profil utilisateur</li>
+                        <li>Modification de l'utilisateur</li>
+                        <li>Suppression du compte</li>
+                        <li>Modification du mot de passe utilisateur</li>
+                        <li>Modification des connexions au comptes</li>
+                    </ul>
+                </li>
+
+            </ul>
+        </p>
+        <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Commencer par se connecter</a>
+    </div>
+
+    <h2>Configuration</h2>
+    <div class="pb-3">
+        <p>
+            Toujours dans la même optique de gagner du temps de développement, vous pouvez configurer le projet directement dans
+            le fichier <strong>config.cfg</strong>.
+        </p>
+        <p>
+            Maintenant vous avez toutes les cartes en main pour démarrer votre projet rapidement =)
+        </p>
+    </div>
+{% endblock content %}
