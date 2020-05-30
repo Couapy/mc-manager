@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}Modifier les paramètres{% endblock title %}
+
+{% block head %}{% endblock head %}
+
+{% block content %}
+<div class="pb-3">
+    <a href="{% url 'main:edit' server.pk %}" class="btn btn-primary">← Retour</a>
+</div>
+{% if success %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    Les modifications ont bien été enregistrées.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
+<h1>Gérer le serveur {{ server.name }}</h1>
+<h2>Paramètres internes du serveur</h2>
+<div class="mb-4">
+    {% crispy form %}
+</div>
+{% endblock content %}

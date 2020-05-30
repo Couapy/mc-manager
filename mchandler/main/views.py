@@ -2,8 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
                               reverse)
 
-from .forms import ServerForm
-from .models import Server
+from .forms import ServerForm, PropertiesForm
+from .models import Server, ServerProperties
 
 
 # Create your views here.
@@ -61,9 +61,10 @@ def edit(request, id):
         instance=server,
     )
     success = None
-    if request.method == 'POST' and form.is_valid:
-        form.save()
-        success = True
+    if request.method == 'POST':
+        if form.has_changed() and form.is_valid():
+            form.save()
+            success = True
 
     context = {
         'server': server,
@@ -72,6 +73,29 @@ def edit(request, id):
         'create_success': 'create' in request.GET,
     }
     return render(request, 'main/edit.html', context)
+
+
+@login_required
+def properties(request, id):
+    server = get_object_or_404(Server, pk=id)
+    properties = get_object_or_404(ServerProperties, server=server)
+    form = PropertiesForm(
+        data=request.POST or None,
+        label_suffix='',
+        instance=properties,
+    )
+    success = None
+    if request.method == 'POST':
+        if form.has_changed() and form.is_valid():
+            form.save()
+            success = True
+
+    context = {
+        'server': server,
+        'form': form,
+        'success': success,
+    }
+    return render(request, 'main/properties.html', context)
 
 
 @login_required

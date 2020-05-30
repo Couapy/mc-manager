@@ -1,4 +1,6 @@
-config.cfg
+.vscode
+mchandler/mchandler/media/
+mchandler/mchandler/static/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

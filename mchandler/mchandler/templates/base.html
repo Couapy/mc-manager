@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <!-- Required meta tags -->
@@ -24,7 +24,22 @@
 
 <body>
     {% include 'nav.html' %}
-    <div class="container pt-4">
+    <div class="container pt-4 pb-4">
+        {% if success is True %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            Les modifications ont bien été enregistrées.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% elif success is False %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            Une erreur est survenue, les modifications n'ont pas été enregistrées.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endif %}
         {% block content %}{% endblock content %}
     </div>
 </body>
