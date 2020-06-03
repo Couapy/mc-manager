@@ -157,10 +157,6 @@ SOCIAL_AUTH_TWITTER_SECRET = config.get("TWITTER", "SECRET")
 SOCIAL_AUTH_FACEBOOK_KEY = config.get("FACEBOOK", "KEY")
 SOCIAL_AUTH_FACEBOOK_SECRET = config.get("FACEBOOK", "SECRET")
 
-LOGIN_REDIRECT_URL = "/accounts/profile/"
-SOCIAL_AUTH_URL_NAMESPACE = 'social'
-AUTH_PROFILE_MODULE = 'accounts.Profile'
-
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -172,6 +168,10 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
+LOGIN_REDIRECT_URL = "/manage/"
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+AUTH_PROFILE_MODULE = 'accounts.Profile'
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/manage/'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/accounts/profile/'
