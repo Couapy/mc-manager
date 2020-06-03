@@ -100,14 +100,14 @@ def connections(request):
         {
             "provider": "github",
             "name": "Github",
-            "link": "https://github.com/",
-            "username": "",
+            "link": "https://github.com/{{ data.login }}",
+            "username": "{{ data.login }}",
         },
         {
             "provider": "twitter",
             "name": "Twitter",
-            "link": "https://twitter.com//",
-            "username": "@",
+            "link": "https://twitter.com/{{ data.access_token.screen_name }}/",
+            "username": "@{{ data.access_token.screen_name }}",
         },
         {
             "provider": "facebook",
