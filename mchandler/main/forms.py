@@ -112,3 +112,20 @@ class PropertiesForm(forms.ModelForm):
         widgets = {
             'motd': forms.Textarea(attrs={'rows': 6})
         }
+
+
+class PermissionForm(forms.Form):
+
+    nickname = forms.CharField(
+        max_length=128,
+        label="Nom du joueur",
+    )
+
+    helper = FormHelper()
+    helper.layout = Layout(
+        'nickname',
+        FormActions(
+            Submit('save', 'Enregistrer'),
+            HTML('<input type="reset" name="cancel" value="Annuler" class="btn btn-secondary">'),
+        ),
+    )

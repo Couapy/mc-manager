@@ -1,0 +1,22 @@
+{% extends 'main/settings.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}Ajouter un serveur{% endblock title %}
+
+{% block body %}
+    <h2>Paramètres globaux</h2>
+    <div class="mb-4">
+        {% crispy form %}
+    </div>
+    <div>
+        <h2>Supprimer le serveur</h2>
+        <p>
+            Attention, le processus de suppression entraine la perte de toutes les données du serveur,
+            y compris les mondes.
+        </p>
+        <a href="{% url 'main:delete' server.pk %}" class="btn btn-danger" onclick="confirm('Etes-vous sûrs de vouloir supprimer ce serveur ?')">
+            Supprimer le serveur
+        </a>
+    </div>
+{% endblock body %}

@@ -1,0 +1,18 @@
+{% extends 'main/settings.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}Ajouter un serveur{% endblock title %}
+
+{% block body %}
+    <h2>Paramètres globaux</h2>
+    <div class="mb-4">
+        {% if server.get_status is 2 %}
+        {% crispy form %}
+        {% else %}
+        <div class="alert alert-danger" role="alert">
+            Le serveur est éteint. Veillez à ce qu'il soit démarré avant cette opération.
+        </div>
+        {% endif %}
+    </div>
+{% endblock body %}
