@@ -1,4 +1,5 @@
 import os
+from uuid import uuid1
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -81,6 +82,9 @@ class Server(models.Model):
 
     def start(self):
         """Start the service."""
+        properties = ServerProperties.objects.get(server=self)
+        properties.update()
+
         for port in ports_availables:
             listen = os.popen(f"netstat -ltun | grep {port}").read()
             if len(listen) == 0:
@@ -212,10 +216,38 @@ class ServerProperties(models.Model):
     def properties(self):
         file_name = f"/opt/minecraft/{self.pk}/server.properties"
         try:
-            with open(file_name, "r") as properties_file:
-                return properties_file.read()
+            with open(file_name, 'r') as properties_file:
+                content = properties_file.read()
+                properties = {}
+                for ligne in content.split("\n"):
+                    if not ligne.startswith("#") and "=" in ligne:
+                        name, property = ligne.split("=")
+                        properties[name] = property
+                return properties
         except Exception:
             return ""
+
+    def update(self):
+        properties_file = f"/opt/minecraft/{self.pk}/server.properties"
+        properties = self.properties
+        result = ''
+
+        for field in self._meta.get_fields():
+            value = self._meta.get_field(field.name).value_from_object(self)
+            name = field.name.replace('_', '-')
+            if name not in['id', 'server']:
+                properties[name] = str(value)
+
+        for name, property in properties.items():
+            result += name + "=" + str(property) + "\n"
+
+        properties_file_temp = "./" + str(uuid1()) + ".server.properties"
+        with open(properties_file_temp, "w+") as temp_file:
+            temp_file.write(result)
+
+        command = f"cp -f {properties_file_temp} {properties_file}"
+        os.system(f"sudo -u minecraft {command}")
+        os.system(f"sudo rm -f {properties_file_temp}")
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
