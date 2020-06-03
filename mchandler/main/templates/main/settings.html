@@ -9,30 +9,6 @@
         </button>
     </div>
     {% endif %}
-    {% if delete_success %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Le serveur a bien été supprimé.
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    {% endif %}
-    {% if start_success %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Le serveur va bientôt démarrer.
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    {% endif %}
-    {% if stop_success %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Le serveur va bientôt s'éteindre.
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    {% endif %}
     {% if request.resolver_match.url_name == "properties" and server.get_status != 0 and success %}
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
         Le serveur doit être redémarré pour que les changements soient pris en compte.
