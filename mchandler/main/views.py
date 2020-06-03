@@ -6,7 +6,6 @@ from .forms import ServerForm, PropertiesForm
 from .models import Server, ServerProperties
 
 
-# Create your views here.
 def index(request):
     context = {}
     return render(request, 'main/index.html', context)
@@ -92,6 +91,7 @@ def properties(request, id):
 
     context = {
         'server': server,
+        'properties': properties,
         'form': form,
         'success': success,
     }

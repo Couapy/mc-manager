@@ -7,17 +7,17 @@
 {% block head %}{% endblock head %}
 
 {% block content %}
-<div class="pb-3">
-    <a href="{% url 'main:edit' server.pk %}" class="btn btn-primary">← Retour</a>
-</div>
-{% if success %}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    Les modifications ont bien été enregistrées.
+{% if server.get_status != 0 and success %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    Le serveur doit être redémarré pour que les changements soient pris en compte.
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 {% endif %}
+<div class="pb-3">
+    <a href="{% url 'main:edit' server.pk %}" class="btn btn-primary">← Retour</a>
+</div>
 <h1>Gérer le serveur {{ server.name }}</h1>
 <h2>Paramètres internes du serveur</h2>
 <div class="mb-4">
