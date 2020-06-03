@@ -1,11 +1,23 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
                               reverse)
+from django.core.exceptions import PermissionDenied
 
 from .forms import ServerForm, PropertiesForm, PermissionForm
 from .models import Server, ServerProperties
 
 
+# Decorators
+def owner_expected(function):
+    def decorator(*args, **kwargs):
+        server = get_object_or_404(Server, pk=kwargs['id'])
+        if server.owner != args[0].user:
+            raise PermissionDenied
+        return function(*args, **kwargs)
+    return decorator
+
+
+# Views
 def index(request):
     context = {}
     return render(request, 'main/index.html', context)
@@ -51,6 +63,7 @@ def add(request):
 
 
 @login_required
+@owner_expected
 def edit(request, id):
     server = get_object_or_404(Server, pk=id)
     form = ServerForm(
@@ -75,6 +88,7 @@ def edit(request, id):
 
 
 @login_required
+@owner_expected
 def properties(request, id):
     server = get_object_or_404(Server, pk=id)
     properties = get_object_or_404(ServerProperties, server=server)
@@ -99,6 +113,7 @@ def properties(request, id):
 
 
 @login_required
+@owner_expected
 def permissions(request, id):
     server = get_object_or_404(Server, pk=id)
     form = PermissionForm(
@@ -121,6 +136,7 @@ def permissions(request, id):
 
 
 @login_required
+@owner_expected
 def delete(request, id):
     server = get_object_or_404(Server, pk=id)
     server.delete()
@@ -128,6 +144,7 @@ def delete(request, id):
 
 
 @login_required
+@owner_expected
 def start(request, id):
     server = get_object_or_404(Server, pk=id)
     if server.owner == request.user:
@@ -136,6 +153,7 @@ def start(request, id):
 
 
 @login_required
+@owner_expected
 def stop(request, id):
     server = get_object_or_404(Server, pk=id)
     if server.owner == request.user:
