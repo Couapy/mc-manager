@@ -147,8 +147,13 @@ class ServerProperties(models.Model):
             ('survival', 'Survie'),
             ('creative', 'Creatif'),
             ('spectator', 'Spectateur'),
+            ('adventure', 'Aventure'),
         ],
         default='survival',
+    )
+    force_gamemode = models.BooleanField(
+        verbose_name="Forcer le gamemode",
+        default=True,
     )
     difficulty = models.CharField(
         verbose_name="Difficulté",
@@ -241,7 +246,7 @@ class ServerProperties(models.Model):
         for name, property in properties.items():
             result += name + "=" + str(property) + "\n"
 
-        properties_file_temp = "./" + str(uuid1()) + ".server.properties"
+        properties_file_temp = "/tmp/" + str(uuid1()) + ".server.properties"
         with open(properties_file_temp, "w+") as temp_file:
             temp_file.write(result)
 

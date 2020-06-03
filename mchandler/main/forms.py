@@ -55,6 +55,11 @@ class PropertiesForm(forms.ModelForm):
         ),
         Row(
             Column(
+                "force_gamemode",
+            ),
+        ),
+        Row(
+            Column(
                 "motd",
             ),
             Column(
@@ -89,6 +94,7 @@ class PropertiesForm(forms.ModelForm):
             "view_distance",
             "level_seed",
             "gamemode",
+            "force_gamemode",
             "difficulty",
             "level_name",
             "motd",
