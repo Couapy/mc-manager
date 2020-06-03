@@ -104,12 +104,12 @@ def permissions(request, id):
     form = PermissionForm(
         data=request.POST or None,
     )
-    ops = server.get_ops()
     success = None
     if request.method == 'POST':
         if form.is_valid():
             server.op(form.cleaned_data['nickname'])
             success = True
+    ops = server.get_ops()
 
     context = {
         'server': server,
