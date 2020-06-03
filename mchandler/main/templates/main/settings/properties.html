@@ -1,0 +1,12 @@
+{% extends 'main/settings.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}Modifier les paramètres{% endblock title %}
+
+{% block body %}
+    <h2>Paramètres internes du serveur</h2>
+    <div class="mb-4">
+        {% crispy form %}
+    </div>
+{% endblock body %}

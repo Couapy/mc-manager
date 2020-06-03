@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
                               reverse)
 
-from .forms import ServerForm, PropertiesForm
+from .forms import ServerForm, PropertiesForm, PermissionForm
 from .models import Server, ServerProperties
 
 
@@ -71,7 +71,7 @@ def edit(request, id):
         'success': success,
         'create_success': 'create' in request.GET,
     }
-    return render(request, 'main/edit.html', context)
+    return render(request, 'main/settings/edit.html', context)
 
 
 @login_required
@@ -95,7 +95,27 @@ def properties(request, id):
         'form': form,
         'success': success,
     }
-    return render(request, 'main/properties.html', context)
+    return render(request, 'main/settings/properties.html', context)
+
+
+@login_required
+def permissions(request, id):
+    server = get_object_or_404(Server, pk=id)
+    form = PermissionForm(
+        data=request.POST or None,
+    )
+    success = None
+    if request.method == 'POST':
+        if form.is_valid():
+            server.op(form.cleaned_data['nickname'])
+            success = True
+
+    context = {
+        'server': server,
+        'form': form,
+        'success': success,
+    }
+    return render(request, 'main/settings/permissions.html', context)
 
 
 @login_required

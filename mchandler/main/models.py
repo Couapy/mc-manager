@@ -80,6 +80,12 @@ class Server(models.Model):
         else:
             return 0
 
+    def op(self, nickname):
+        """Op a player."""
+        if self.get_status() is 2:
+            command = f"sudo -u minecraft /usr/bin/screen -p 0 -S mc-{self.pk} -X eval 'stuff \"op {nickname}\"\\015'"
+            os.system(command)
+
     def start(self):
         """Start the service."""
         properties = ServerProperties.objects.get(server=self)
