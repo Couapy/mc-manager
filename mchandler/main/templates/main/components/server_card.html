@@ -13,7 +13,7 @@
                 <small>Version : {{ server.version }}</small>
             </p>
             {% if user == server.owner %}
-            <a href="{% url 'main:edit' server.pk %}" class="btn btn-primary">Editer</a>
+            <a href="{% url 'main:edit' server.pk %}" class="btn btn-primary">Paramétrer</a>
             {% if server.get_status %}
             <a href="{% url 'main:stop' server.pk %}" class="btn btn-danger">Eteindre</a>
             {% else %}

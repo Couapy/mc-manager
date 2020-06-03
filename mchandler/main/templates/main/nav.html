@@ -10,4 +10,12 @@
         <a href="{% url 'main:properties' server.pk %}" class="list-group-item{% if request.resolver_match.url_name == "properties" %} active{% endif %}">Propriétés</a>
         <a href="{% url 'main:permissions' server.pk %}" class="list-group-item{% if request.resolver_match.url_name == "permissions" %} active{% endif %}">Permissions</a>
     </ul>
+
+    <ul class="list-group mt-3">
+        {% if server.get_status %}
+        <a href="{% url 'main:stop' server.pk %}" class="list-group-item list-group-item-danger">Eteindre</a>
+        {% else %}
+        <a href="{% url 'main:start' server.pk %}" class="list-group-item list-group-item-success">Démarrer</a>
+        {% endif %}
+    </ul>
 </div>
