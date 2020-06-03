@@ -83,7 +83,7 @@ class Server(models.Model):
 
     def op(self, nickname):
         """Op a player."""
-        if self.get_status() is 2:
+        if self.get_status() == 2:
             command = f"sudo -u minecraft /usr/bin/screen -p 0 -S mc-{self.pk} -X eval 'stuff \"op {nickname}\"\\015'"
             os.system(command)
 
@@ -104,13 +104,22 @@ class Server(models.Model):
         for port in ports_availables:
             listen = os.popen(f"netstat -ltun | grep {port}").read()
             if len(listen) == 0:
-                os.system(
-                    f"sudo -u minecraft sh {settings.BASE_DIR}/main/scripts/config.sh "
-                    + f"{self.pk} 256M 4G {port}"
-                )
-                os.system("sudo systemctl start minecraft@" + str(self.pk) + " &")
+                file_path = f"/opt/minecraft/{self.pk}/server.conf"
+                file_path_temp = f"/tmp/" + str(uuid1()) + ".server.conf"
+
+                # Update the RAM and PORT configuration
+                config = f"MCMINMEM={settings.MCMINMEM}\n"
+                config += f"MCMAXMEM={settings.MCMAXMEM}\n"
+                config += f"PORT={port}\n"
+                with open(file_path_temp, 'w+') as file:
+                    file.write(config)
+                os.system(f"sudo -u minecraft cp -f {file_path_temp} {file_path}")
+                os.system(f"rm -f {file_path_temp}")
+
+                # Start the server
                 self.port = port
                 self.save()
+                os.system("sudo systemctl start minecraft@" + str(self.pk) + " &")
                 break
 
     def stop(self):
@@ -120,17 +129,16 @@ class Server(models.Model):
     def save(self, *args, **kwargs):
         new = self.pk is None
         super().save(*args, **kwargs)
+        prefix = "sudo -u minecraft "
         if new:
-            command = "sudo -u minecraft "
-            command += f"sh {settings.BASE_DIR}/main/scripts/new.sh {self.pk} {self.version}"
-            os.system(command)
-        else:
-            pass
+            os.system(prefix + f"mkdir /opt/minecraft/{self.pk}")
+            os.system(prefix + f"echo eula=true > /opt/minecraft /$1/eula.txt")
+        os.system(prefix + f"cp -f /opt/minecraft/servers/{self.version} /opt/minecraft/{self.pk}/minecraft_server.jar")
 
     def delete(self, *args, **kwargs):
         self.stop()
-        os.system(f"rm -rf /opt/minecraft/{self.pk}")
         super().delete(*args, **kwargs)
+        os.system(f"sudo -u minecraft rm -rf /opt/minecraft/{self.pk}")
 
 
 class ServerProperties(models.Model):
@@ -236,17 +244,17 @@ class ServerProperties(models.Model):
     @property
     def properties(self):
         file_name = f"/opt/minecraft/{self.pk}/server.properties"
+        properties = {}
         try:
             with open(file_name, 'r') as properties_file:
                 content = properties_file.read()
-                properties = {}
                 for ligne in content.split("\n"):
                     if not ligne.startswith("#") and "=" in ligne:
                         name, property = ligne.split("=")
                         properties[name] = property
-                return properties
         except Exception:
-            return ""
+            pass
+        return properties
 
     def update(self):
         properties_file = f"/opt/minecraft/{self.pk}/server.properties"
@@ -269,11 +277,6 @@ class ServerProperties(models.Model):
         command = f"cp -f {properties_file_temp} {properties_file}"
         os.system(f"sudo -u minecraft {command}")
         os.system(f"sudo rm -f {properties_file_temp}")
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        # Update the server.properties
-        # Restart the server if it is started
 
 
 @receiver(post_save, sender=Server)

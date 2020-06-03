@@ -173,6 +173,10 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.user.user_details',
 )
 
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/accounts/profile/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/manage/'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/accounts/profile/'
 SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/'
+
+# Minecraft default configuration
+MCMINMEM = config.get("MINECRAFT", "MCMINMEM")
+MCMAXMEM = config.get("MINECRAFT", "MCMAXMEM")
