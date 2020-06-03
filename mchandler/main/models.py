@@ -132,13 +132,13 @@ class Server(models.Model):
         prefix = "sudo -u minecraft "
         if new:
             os.system(prefix + f"mkdir /opt/minecraft/{self.pk}")
-            os.system(prefix + f"echo eula=true > /opt/minecraft /$1/eula.txt")
+            os.system(prefix + f"echo \"eula=true\" > /opt/minecraft/{self.pk}/eula.txt")
         os.system(prefix + f"cp -f /opt/minecraft/servers/{self.version} /opt/minecraft/{self.pk}/minecraft_server.jar")
 
     def delete(self, *args, **kwargs):
         self.stop()
-        super().delete(*args, **kwargs)
         os.system(f"sudo -u minecraft rm -rf /opt/minecraft/{self.pk}")
+        super().delete(*args, **kwargs)
 
 
 class ServerProperties(models.Model):
