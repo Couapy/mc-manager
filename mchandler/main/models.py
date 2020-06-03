@@ -1,11 +1,12 @@
+import json
 import os
 from uuid import uuid1
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.conf import settings
-from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 def get_versions_availables():
@@ -85,6 +86,15 @@ class Server(models.Model):
         if self.get_status() is 2:
             command = f"sudo -u minecraft /usr/bin/screen -p 0 -S mc-{self.pk} -X eval 'stuff \"op {nickname}\"\\015'"
             os.system(command)
+
+    def get_ops(self):
+        filename = f"/opt/minecraft/{self.pk}/ops.json"
+        try:
+            with open(filename, 'r') as file:
+                content = file.read()
+            return json.loads(content)
+        except Exception:
+            return []
 
     def start(self):
         """Start the service."""

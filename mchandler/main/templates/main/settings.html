@@ -33,7 +33,7 @@
         </button>
     </div>
     {% endif %}
-    {% if server.get_status != 0 and success %}
+    {% if request.resolver_match.url_name == "properties" and server.get_status != 0 and success %}
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
         Le serveur doit être redémarré pour que les changements soient pris en compte.
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">

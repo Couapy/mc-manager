@@ -14,5 +14,27 @@
             Le serveur est éteint. Veillez à ce qu'il soit démarré avant cette opération.
         </div>
         {% endif %}
+        {% if ops %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">UUID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in ops %}
+                <tr>
+                    <td>{{ player.name }}</td>
+                    <td>{{ player.uuid }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            Aucun administrateur a été défini.
+        </div>
+        {% endif %}
     </div>
 {% endblock body %}

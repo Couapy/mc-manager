@@ -104,6 +104,7 @@ def permissions(request, id):
     form = PermissionForm(
         data=request.POST or None,
     )
+    ops = server.get_ops()
     success = None
     if request.method == 'POST':
         if form.is_valid():
@@ -114,6 +115,7 @@ def permissions(request, id):
         'server': server,
         'form': form,
         'success': success,
+        'ops': ops,
     }
     return render(request, 'main/settings/permissions.html', context)
 
