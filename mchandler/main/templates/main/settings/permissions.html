@@ -5,8 +5,11 @@
 {% block title %}Ajouter un serveur{% endblock title %}
 
 {% block body %}
-    <h2>Paramètres globaux</h2>
+    <h2>Ajouter un administrateur</h2>
     <div class="mb-4">
+        <p>
+            Vous pouvez définir ici les administrateurs du serveur.
+        </p>
         {% if server.get_status is 2 %}
         {% crispy form %}
         {% else %}
@@ -15,22 +18,27 @@
         </div>
         {% endif %}
         {% if ops %}
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">UUID</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for player in ops %}
-                <tr>
-                    <td>{{ player.name }}</td>
-                    <td>{{ player.uuid }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="mt-3">
+            <p>
+                Des administrateurs ont déjà été défini :
+            </p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">UUID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in ops %}
+                    <tr>
+                        <td>{{ player.name }}</td>
+                        <td>{{ player.uuid }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% else %}
         <div class="alert alert-info" role="alert">
             Aucun administrateur a été défini.
