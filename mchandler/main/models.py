@@ -24,6 +24,24 @@ ports_availables = [
     25564,
     25563,
 ]
+share_level_choices = [
+    ("full", "Démarrage, configuration et repartage"),
+    ("standard", "Démarrage et configuration"),
+    ("strict", "Démarrage uniquement"),
+]
+
+
+class ServerShare(models.Model):
+    user = models.ForeignKey(
+        verbose_name="Utilisateur",
+        to=User,
+        on_delete=models.CASCADE
+    )
+    level = models.CharField(
+        verbose_name="Type de permission",
+        max_length=8,
+        choices=share_level_choices,
+    )
 
 
 class Server(models.Model):
@@ -62,6 +80,11 @@ class Server(models.Model):
         verbose_name="Icone",
         blank=True,
         null=True,
+    )
+    shares = models.ManyToManyField(
+
+
+        ServerShare,
     )
 
     def get_image(self):
@@ -192,7 +215,7 @@ class ServerProperties(models.Model):
     )
     level_name = models.CharField(
         verbose_name="Nom du monde",
-        max_length=16,
+        max_length=32,
         default='world',
     )
     motd = models.TextField(

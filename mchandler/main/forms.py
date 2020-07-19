@@ -1,9 +1,29 @@
 from django import forms
-from .models import Server, ServerProperties
+from .models import ServerShare, Server, ServerProperties
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Column, Row, Submit, HTML
 from crispy_forms.bootstrap import FormActions
+
+class ServerShareForm(forms.ModelForm):
+    helper = FormHelper()
+    helper.layout = Layout(
+        Row(
+            Column("user"),
+            Column("level"),
+        ),
+        FormActions(
+            Submit('save', 'Enregistrer'),
+            HTML('<input type="reset" name="cancel" value="Annuler" class="btn btn-secondary">'),
+        )
+    )
+
+    class Meta:
+        model = ServerShare
+        fields = [
+            'user',
+            'level',
+        ]
 
 
 class ServerForm(forms.ModelForm):

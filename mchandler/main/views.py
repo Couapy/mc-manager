@@ -3,7 +3,7 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
                               reverse)
 from django.core.exceptions import PermissionDenied
 
-from .forms import ServerForm, PropertiesForm, PermissionForm
+from .forms import ServerShareForm, ServerForm, PropertiesForm, PermissionForm
 from .models import Server, ServerProperties
 
 
@@ -133,6 +133,32 @@ def permissions(request, id):
         'ops': ops,
     }
     return render(request, 'main/settings/permissions.html', context)
+
+
+@login_required
+@owner_expected
+def share(request, id):
+    server = get_object_or_404(Server, pk=id)
+    form = ServerShareForm(
+        data=request.POST or None,
+    )
+    success = None
+    if request.method == 'POST':
+        if form.is_valid():
+            if form.cleaned_data['user'].pk != request.user.pk:
+                share = form.save()
+                server.shares.add(share)
+                server.save()
+                success = True
+                form = ServerShareForm()
+            else:
+                success = False
+    context = {
+        'server': server,
+        'form': form,
+        'success': success
+    }
+    return render(request, 'main/settings/share.html', context)
 
 
 @login_required
