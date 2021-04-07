@@ -1,0 +1,5 @@
+#!/bin/bash
+
+PYTHON="$(pwd)/.venv/bin/python3"
+$PYTHON manage.py migrate
+$PYTHON manage.py check --deploy

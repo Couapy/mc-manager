@@ -1,0 +1,4 @@
+#!/bin/bash
+
+PYTHON="$(pwd)/.venv/bin/python3"
+$PYTHON manage.py test apps
