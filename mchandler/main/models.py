@@ -10,7 +10,10 @@ from django.dispatch import receiver
 
 
 def get_versions_availables():
-    servers = os.listdir('/opt/minecraft/servers/')
+    try:
+        servers = os.listdir('/opt/minecraft/servers/')
+    except Exception:
+        servers = []
     versions = []
     for server in servers:
         (filename, ext) = os.path.splitext(server)
