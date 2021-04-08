@@ -1,5 +1,8 @@
-import os
 import configparser
+import os
+import re
+
+import mcdwld
 
 
 # Constants
@@ -14,7 +17,7 @@ config.read(os.path.join(BASE_DIR, 'config.cfg'))
 # Security
 SECRET_KEY = config.get('DJANGO', 'SECRET_KEY')
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = re.split(', ?', config.get('DJANGO', 'DOMAINS'))
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -147,10 +150,11 @@ SOCIAL_AUTH_DISCONNECT_REDIRECT_URL = '/'
 
 
 # Files
+VAR_DIR = os.path.join(BASE_DIR, 'var')
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'var/static/')
+STATIC_ROOT = os.path.join(VAR_DIR, 'static/')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'var/media/')
+MEDIA_ROOT = os.path.join(VAR_DIR, 'media/')
 
 
 # Locale
@@ -163,3 +167,11 @@ USE_TZ = True
 
 # Crispy forms
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
+# Minecraft servers
+MINECRAFT_ROOT = os.path.join(VAR_DIR, 'servers_files')
+MINECRAFT_DATA_ROOT = os.path.join(VAR_DIR, 'servers_data')
+MINECRAFT_SERVERS_TYPES = re.split(
+    ', ?', config.get('MINECRAFT', 'SERVER_TYPES'))
+MINECRAFT_SERVERS_LOCAL = mcdwld.get_local_versions(directory=MINECRAFT_ROOT)

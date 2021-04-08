@@ -1,9 +1,6 @@
-import re
-
 from project.settings.base import config
 
 DEBUG = False
-ALLOWED_HOSTS = re.split(', ?', config.get('DJANGO', 'DOMAINS'))
 
 # Database
 DATABASES = {

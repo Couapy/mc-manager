@@ -1,11 +1,23 @@
-# MC-Handler
+# mc-manager
+
 Minecraft Server Web Interface
 
-## Intall
+## Install
 
-The following insttruction will guide you to install the MC-Handler.
+Follow this instructions to install the project :
 
-> git clone https://github.com/Couapy/MC-Handler.git
+```bash
+# Clone repository
+git clone https://github.com/Couapy/mc-manager.git
+
+# Install dependencies
+virtualenv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# Download servers
+python manage.py updatemclist
+```
 
 ### Create user minecraft
 
