@@ -7,7 +7,7 @@ from django.conf import settings
 
 
 class Command(BaseCommand):
-    help = 'Download minecraft server files to the project.ùù'
+    help = 'Download minecraft server files to the project.'
 
     def handle(self, *args, **options):
         """Download all servers."""

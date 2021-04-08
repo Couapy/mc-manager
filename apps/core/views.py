@@ -3,7 +3,7 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
                               reverse)
 from django.core.exceptions import PermissionDenied
 
-from .forms import ServerShareForm, ServerForm, PropertiesForm, PermissionForm
+from .forms import ServerForm, PropertiesForm, PermissionForm
 from .models import Server, ServerProperties
 
 
@@ -54,7 +54,7 @@ def add(request):
         new_server = form.save()
         new_server.owner = request.user
         new_server.save()
-        return HttpResponseRedirect(reverse('main:edit', args=[new_server.pk]) + "?create=1")
+        return HttpResponseRedirect(reverse('core:edit', args=[new_server.pk]) + "?create=1")
 
     context = {
         'form': form,
@@ -137,36 +137,10 @@ def permissions(request, id):
 
 @login_required
 @owner_expected
-def share(request, id):
-    server = get_object_or_404(Server, pk=id)
-    form = ServerShareForm(
-        data=request.POST or None,
-    )
-    success = None
-    if request.method == 'POST':
-        if form.is_valid():
-            if form.cleaned_data['user'].pk != request.user.pk:
-                share = form.save()
-                server.shares.add(share)
-                server.save()
-                success = True
-                form = ServerShareForm()
-            else:
-                success = False
-    context = {
-        'server': server,
-        'form': form,
-        'success': success
-    }
-    return render(request, 'main/settings/share.html', context)
-
-
-@login_required
-@owner_expected
 def delete(request, id):
     server = get_object_or_404(Server, pk=id)
     server.delete()
-    return HttpResponseRedirect(reverse('main:manage') + "?delete=1")
+    return HttpResponseRedirect(reverse('core:manage') + "?delete=1")
 
 
 @login_required
@@ -175,7 +149,7 @@ def start(request, id):
     server = get_object_or_404(Server, pk=id)
     if server.owner == request.user:
         server.start()
-    return HttpResponseRedirect(reverse('main:manage') + "?start=1")
+    return HttpResponseRedirect(reverse('core:manage') + "?start=1")
 
 
 @login_required
@@ -184,4 +158,4 @@ def stop(request, id):
     server = get_object_or_404(Server, pk=id)
     if server.owner == request.user:
         server.stop()
-    return HttpResponseRedirect(reverse('main:manage') + "?stop=1")
+    return HttpResponseRedirect(reverse('core:manage') + "?stop=1")

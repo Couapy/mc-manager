@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     # My applications
     'account',
-    'main',
+    'core',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

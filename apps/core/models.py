@@ -9,42 +9,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-def get_versions_availables():
-    try:
-        servers = os.listdir('/opt/minecraft/servers/')
-    except Exception:
-        servers = []
-    versions = []
-    for server in servers:
-        (filename, ext) = os.path.splitext(server)
-        versions.append((server, filename))
-    return versions
-
-
-versions_availables = get_versions_availables()
 ports_availables = [
     25565,
     25564,
     25563,
 ]
-share_level_choices = [
-    ("full", "Démarrage, configuration et repartage"),
-    ("standard", "Démarrage et configuration"),
-    ("strict", "Démarrage uniquement"),
-]
-
-
-class ServerShare(models.Model):
-    user = models.ForeignKey(
-        verbose_name="Utilisateur",
-        to=User,
-        on_delete=models.CASCADE
-    )
-    level = models.CharField(
-        verbose_name="Type de permission",
-        max_length=8,
-        choices=share_level_choices,
-    )
 
 
 class Server(models.Model):
@@ -77,17 +46,11 @@ class Server(models.Model):
     version = models.CharField(
         verbose_name="Version",
         max_length=32,
-        choices=versions_availables,
     )
     image = models.ImageField(
         verbose_name="Icone",
         blank=True,
         null=True,
-    )
-    shares = models.ManyToManyField(
-
-
-        ServerShare,
     )
 
     def get_image(self):

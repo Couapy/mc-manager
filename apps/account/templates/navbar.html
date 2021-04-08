@@ -9,13 +9,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'main:public-servers' %}">Serveurs publics</a>
+                <a class="nav-link" href="{% url 'core:public-servers' %}">Serveurs publics</a>
             </li>
         </ul>
         <ul class="navbar-nav">
             {% if user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'main:manage' %}">Mes serveurs</a>
+                <a class="nav-link" href="{% url 'core:manage' %}">Mes serveurs</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'account:index' %}">Mon compte</a>

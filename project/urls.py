@@ -7,7 +7,7 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('account/', include('account.urls')),
     path('account/', include('django.contrib.auth.urls')),
-    path('', include('main.urls')),
+    path('', include('core.urls')),
     path('', include("social_django.urls", namespace="social")),
 ] + static(
     settings.STATIC_URL,
