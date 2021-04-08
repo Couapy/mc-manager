@@ -9,7 +9,6 @@
         <a href="{% url 'core:edit' server.pk %}" class="list-group-item{% if request.resolver_match.url_name == "edit" %} active{% endif %}">Paramètres globaux</a>
         <a href="{% url 'core:properties' server.pk %}" class="list-group-item{% if request.resolver_match.url_name == "properties" %} active{% endif %}">Propriétés</a>
         <a href="{% url 'core:permissions' server.pk %}" class="list-group-item{% if request.resolver_match.url_name == "permissions" %} active{% endif %}">Permissions</a>
-        <a href="{% url 'core:share' server.pk %}" class="list-group-item{% if request.resolver_match.url_name == "share" %} active{% endif %}">Partage</a>
     </ul>
 
     <ul class="list-group mt-3">

@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from .models import Server, ServerProperties
 
 from crispy_forms.helper import FormHelper
@@ -7,6 +8,7 @@ from crispy_forms.bootstrap import FormActions
 
 
 class ServerForm(forms.ModelForm):
+    
     helper = FormHelper()
     helper.layout = Layout(
         Row(
@@ -23,6 +25,19 @@ class ServerForm(forms.ModelForm):
             HTML('<input type="reset" name="cancel" value="Annuler" class="btn btn-secondary">'),
         )
     )
+
+    def __init__(self, *args, **kwargs):
+        super(forms.ModelForm, self).__init__(*args, **kwargs)
+
+        versions_installed = settings.MINECRAFT_SERVERS_LOCAL
+        version_choices = []
+        for version in versions_installed:
+            version_choices.append((version, version))
+        
+        self.fields['version'] = forms.ChoiceField(
+            choices=version_choices,
+            label="version"
+        )
 
     class Meta:
         model = Server
