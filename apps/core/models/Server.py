@@ -9,6 +9,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from .MinecraftInstance import SOCKFILE_NAME, MinecraftInstance
+from .ServerProperties import ServerProperties
 
 
 class Server(models.Model):
@@ -100,12 +101,12 @@ class Server(models.Model):
         sock.close()
 
     def delete(self, *args, **kwargs):
-        super().delete(*args, **kwargs)
         instance = MinecraftInstance(
             id=self.pk,
-            version=self.version
+            version=self.version,
         )
         instance.delete_data()
+        super().delete(*args, **kwargs)
 
 
 @receiver(post_save, sender=Server)

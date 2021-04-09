@@ -22,10 +22,8 @@
             {% endif %}
         </div>
         <div class="card-footer">
-            {% if server.get_status == 2 %}
+            {% if server.get_status == 1 %}
             <small class="text-muted"><img src="{% static 'img/started.svg' %}" alt="Status" style="width: 1em; height: 1em;"> Démarré - Port {{ server.port }}</small>
-            {% elif server.get_status == 1 %}
-            <small class="text-muted"><img src="{% static 'img/loading.svg' %}" alt="Status" style="width: 1em; height: 1em;"> Démarrage...</small>
             {% else %}
             <small class="text-muted"><img src="{% static 'img/stopped.svg' %}" alt="Status" style="width: 1em; height: 1em;"> Eteint</small>
             {% endif %}

@@ -91,7 +91,7 @@ class MinecraftInstance(Thread):
             # Launch jar file
             '-jar',
             self.executable,
-            '--port %d' % self.port,
+            # '--port %d' % self.port,
             '--nogui',  # desactive server gui
         ]
         self.processus = Popen(
@@ -118,6 +118,7 @@ class MinecraftInstance(Thread):
                     return
                 elif msg_type == 'command':
                     self.exec_command(msg_data)
+        self.stop()
 
     def exec_command(self, command: str):
         """Give a command to the server."""
