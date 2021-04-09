@@ -40,6 +40,7 @@ class MinecraftInstance(Thread):
         * eula.txt and accept it
         """
         Thread.__init__(self)
+        self.setName('Server#%d' % id)
 
         self.id = id
         self.running = False
@@ -59,6 +60,8 @@ class MinecraftInstance(Thread):
         self.socket = socket(AF_UNIX, SOCK_DGRAM)
         self.socket.setblocking(False)
 
+    def run(self):
+        """Execute the Minecraft server."""
         if not os.path.exists(self.executable):
             raise FileNotFoundError(
                 'Server executable not found (%s)' % self.executable)
@@ -72,8 +75,6 @@ class MinecraftInstance(Thread):
         with open(self.eula_file, 'wt+') as eula:
             eula.write('eula=true')
 
-    def run(self):
-        """Execute the Minecraft server."""
         self.socket.bind(self.sockfile)
         self.port = get_first_open_port(self.DEFAULT_PORT)
 
@@ -138,7 +139,7 @@ class MinecraftInstance(Thread):
         """
         if not self.running:
             return
-        
+
         self.running = False
         self.socket.close()
         os.remove(self.sockfile)

@@ -116,21 +116,16 @@ def properties(request, id):
 @owner_expected
 def permissions(request, id):
     server = get_object_or_404(Server, pk=id)
-    form = PermissionForm(
-        data=request.POST or None,
-    )
+    form = PermissionForm(data=request.POST or None)
     success = None
-    if request.method == 'POST':
-        if form.is_valid():
-            server.op(form.cleaned_data['nickname'])
-            success = True
-    ops = server.get_ops()
-
+    if request.method == 'POST' and form.is_valid():
+        server.op(form.cleaned_data['nickname'])
+        success = True
     context = {
         'server': server,
         'form': form,
         'success': success,
-        'ops': ops,
+        'ops': server.get_ops(),
     }
     return render(request, 'main/settings/permissions.html', context)
 

@@ -1,3 +1,4 @@
+import json
 import os
 from socket import AF_UNIX, SOCK_DGRAM, socket
 
@@ -49,6 +50,17 @@ class Server(models.Model):
         null=True,
     )
 
+    def _send_command(self, command=''):
+        """Send a command to the server instance."""
+        if self.get_status() == 0:
+            raise NotRunningError
+        directory = settings.MINECRAFT_DATA_ROOT % self.pk
+        sockfile = os.path.join(directory, SOCKFILE_NAME)
+        sock = socket(AF_UNIX, SOCK_DGRAM)
+        sock.connect(sockfile)
+        sock.send(command.encode('utf-8'))
+        sock.close()
+
     def get_status(self):
         """
         Give current status of the server instance.
@@ -71,13 +83,19 @@ class Server(models.Model):
             return 0
 
     def get_ops(self):
-        filename = f"/opt/minecraft/{self.pk}/ops.json"
+        """Get administrators."""
+        instance = MinecraftInstance(id=self.pk, version=self.version)
+        filename = os.path.join(instance.directory, 'ops.json')
         try:
             with open(filename, 'r') as file:
                 content = file.read()
             return json.loads(content)
         except Exception:
             return []
+
+    def op(self, nickname):
+        """Make administrator a player."""
+        self._send_command('command:op %s' % nickname)
 
     def start(self):
         """Start an instance of the server."""
@@ -91,14 +109,7 @@ class Server(models.Model):
 
     def stop(self):
         """Stop the service."""
-        if self.get_status() == 0:
-            raise NotRunningError
-        directory = settings.MINECRAFT_DATA_ROOT % self.pk
-        sockfile = os.path.join(directory, SOCKFILE_NAME)
-        sock = socket(AF_UNIX, SOCK_DGRAM)
-        sock.connect(sockfile)
-        sock.send('action:close'.encode('utf-8'))
-        sock.close()
+        self._send_command('action:close')
 
     def delete(self, *args, **kwargs):
         instance = MinecraftInstance(

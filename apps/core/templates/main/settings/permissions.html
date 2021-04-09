@@ -10,7 +10,7 @@
         <p>
             Vous pouvez définir ici les administrateurs du serveur.
         </p>
-        {% if server.get_status is 2 %}
+        {% if server.get_status is 1 %}
         {% crispy form %}
         {% else %}
         <div class="alert alert-danger" role="alert">
