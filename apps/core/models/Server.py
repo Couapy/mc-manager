@@ -100,6 +100,7 @@ class Server(models.Model):
         sock.close()
 
     def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
         instance = MinecraftInstance(
             id=self.pk,
             version=self.version
