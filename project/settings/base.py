@@ -170,8 +170,10 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 
 # Minecraft servers
-MINECRAFT_ROOT = os.path.join(VAR_DIR, 'servers_files')
-MINECRAFT_DATA_ROOT = os.path.join(VAR_DIR, 'servers_data')
+MINECRAFT_DOWNLOAD_ROOT = os.path.join(VAR_DIR, 'servers_files')
+MINECRAFT_DATA_ROOT = os.path.join(VAR_DIR, 'servers_data', 'server-%02d')
 MINECRAFT_SERVERS_TYPES = re.split(
     ', ?', config.get('MINECRAFT', 'SERVER_TYPES'))
-MINECRAFT_SERVERS_LOCAL = mcdwld.get_local_versions(directory=MINECRAFT_ROOT)
+MINECRAFT_SERVERS_LOCAL = mcdwld.get_local_versions(directory=MINECRAFT_DOWNLOAD_ROOT)
+MINECRAFT_MCMINMEM = config.get('MINECRAFT', 'MCMINMEM')
+MINECRAFT_MCMAXMEM = config.get('MINECRAFT', 'MCMAXMEM')
