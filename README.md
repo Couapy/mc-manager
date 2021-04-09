@@ -1,5 +1,8 @@
 # mc-manager
 
+[![Django Units tests](https://github.com/Couapy/mc-manager/actions/workflows/unit-test.yml/badge.svg)](https://github.com/Couapy/mc-manager/actions/workflows/unit-test.yml)
+[![MIT License](https://img.shields.io/badge/license-MIT-red.svg)](https://github.com/5kyc0d3r/upnpy/blob/master/LICENSE)
+
 Minecraft Server Web Interface
 
 ## Install
