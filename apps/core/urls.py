@@ -6,8 +6,8 @@ from . import views
 app_name = "core"
 urlpatterns = [
     path('', views.Index.as_view(), name='index'),
-    path('public-servers/', views.public_servers, name="public-servers"),
-    path('manage/', views.manage, name='manage'),
+    path('public-servers/', views.PublicServersView.as_view(), name="public-servers"),
+    path('manage/', views.ManageView.as_view(), name='manage'),
     path('server/add/', views.add, name="add"),
     path('server/<int:id>/edit/', views.edit, name="edit"),
     path('server/<int:id>/properties/', views.properties, name="properties"),

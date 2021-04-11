@@ -3,9 +3,12 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
                               reverse)
 from django.core.exceptions import PermissionDenied
 from django.views.generic import TemplateView
+from django.contrib import messages
 
 from .forms import ServerForm, PropertiesForm, PermissionForm
 from .models import Server
+from .exceptions import AlreadyRunningError, NotRunningError
+from django.utils.decorators import method_decorator
 
 
 # Decorators
@@ -23,23 +26,23 @@ class Index(TemplateView):
     template_name = "core/index.html"
 
 
-def public_servers(request):
-    context = {
-        'servers': Server.objects.filter(public=True)
-    }
-    return render(request, 'core/list.html', context)
+class PublicServersView(TemplateView):
+    template_name = 'core/list.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['servers'] = Server.objects.filter(public=True)
+        return context
 
 
-@login_required
-def manage(request):
-    servers = Server.objects.filter(owner=request.user)
-    context = {
-        'servers': servers,
-        'delete_success': 'delete' in request.GET,
-        'start_success': 'start' in request.GET,
-        'stop_success': 'stop' in request.GET,
-    }
-    return render(request, 'core/manage.html', context)
+@method_decorator(login_required, name='dispatch')
+class ManageView(TemplateView):
+    template_name = 'core/manage.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['servers'] = Server.objects.filter(owner=self.request.user)
+        return context
 
 
 @login_required
@@ -54,6 +57,11 @@ def add(request):
         new_server = form.save()
         new_server.owner = request.user
         new_server.save()
+        messages.add_message(
+            request=request,
+            level=messages.INFO,
+            message='Le serveur a bien été créé.',
+        )
         return HttpResponseRedirect(reverse('core:edit', args=[new_server.pk]) + "?create=1")
 
     context = {
@@ -72,17 +80,17 @@ def edit(request, id):
         label_suffix='',
         instance=server,
     )
-    success = None
-    if request.method == 'POST':
-        if form.has_changed() and form.is_valid():
-            form.save()
-            success = True
+    if request.method == 'POST' and form.has_changed() and form.is_valid():
+        form.save()
+        messages.add_message(
+            request=request,
+            level=messages.INFO,
+            message='Les paramètres du serveur on bien été enregistrés.',
+        )
 
     context = {
         'server': server,
         'form': form,
-        'success': success,
-        'create_success': 'create' in request.GET,
     }
     return render(request, 'core/settings/edit.html', context)
 
@@ -96,16 +104,24 @@ def properties(request, id):
         data=request.POST or properties or None,
         label_suffix='',
     )
-    success = None
     if request.method == 'POST' and form.has_changed() and form.is_valid():
         server.set_properties(form.cleaned_data)
-        success = True
+        messages.add_message(
+            request=request,
+            level=messages.INFO,
+            message='Les propriétés du serveur on bien été enregistrées.',
+        )
+        if server.get_status() == 1:
+            messages.add_message(
+                request=request,
+                level=messages.WARNING,
+                message='Vous devez redémarrer le serveur pour les prendre en compte.',
+            )
 
     context = {
         'server': server,
         'properties': properties,
         'form': form,
-        'success': success,
     }
     return render(request, 'core/settings/properties.html', context)
 
@@ -115,14 +131,31 @@ def properties(request, id):
 def permissions(request, id):
     server = get_object_or_404(Server, pk=id)
     form = PermissionForm(data=request.POST or None)
-    success = None
     if request.method == 'POST' and form.is_valid():
-        server.op(form.cleaned_data['nickname'])
-        success = True
+        try:
+            server.op(form.cleaned_data['nickname'])
+            name = form.cleaned_data['nickname']
+            message = '%s a bien été ajouté à la liste des administrateurs' % name
+            messages.add_message(
+                request=request,
+                level=messages.INFO,
+                message=message,
+            )
+            messages.add_message(
+                request=request,
+                level=messages.WARNING,
+                message='L\'information va être traitée sous peu.' +
+                ' Vous devrez peut-être recharcher cette page pour voir apparaître un changement.'
+            )
+        except NotRunningError:
+            messages.add_message(
+                request=request,
+                level=messages.ERROR,
+                message='Le serveur est à l\'arrêt. Impossible de traiter la demande',
+            )
     context = {
         'server': server,
         'form': form,
-        'success': success,
         'ops': server.get_ops(),
     }
     return render(request, 'core/settings/permissions.html', context)
@@ -133,6 +166,11 @@ def permissions(request, id):
 def delete(request, id):
     server = get_object_or_404(Server, pk=id)
     server.delete()
+    messages.add_message(
+        request=request,
+        level=messages.INFO,
+        message='Le serveur vient d\'être supprimé.',
+    )
     return HttpResponseRedirect(reverse('core:manage') + "?delete=1")
 
 
@@ -140,15 +178,37 @@ def delete(request, id):
 @owner_expected
 def start(request, id):
     server = get_object_or_404(Server, pk=id)
-    if server.owner == request.user:
+    try:
         server.start()
-    return HttpResponseRedirect(reverse('core:manage') + "?start=1")
+        messages.add_message(
+            request=request,
+            level=messages.INFO,
+            message='Le serveur est en train de démarrer',
+        )
+    except AlreadyRunningError:
+        messages.add_message(
+            request=request,
+            level=messages.ERROR,
+            message='Le serveur est déjà allumé.',
+        )
+    return HttpResponseRedirect(reverse('core:manage'))
 
 
 @login_required
 @owner_expected
 def stop(request, id):
     server = get_object_or_404(Server, pk=id)
-    if server.owner == request.user:
+    try:
         server.stop()
-    return HttpResponseRedirect(reverse('core:manage') + "?stop=1")
+        messages.add_message(
+            request=request,
+            level=messages.INFO,
+            message='Le serveur va s\'arrêter.',
+        )
+    except NotRunningError:
+        messages.add_message(
+            request=request,
+            level=messages.ERROR,
+            message='Le serveur est déjà à l\'arrêt.',
+        )
+    return HttpResponseRedirect(reverse('core:manage'))
