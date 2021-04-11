@@ -79,6 +79,7 @@ TEMPLATES = [
     },
 ]
 WSGI_APPLICATION = 'project.wsgi.application'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 
 # Authentication
