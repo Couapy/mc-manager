@@ -6,11 +6,8 @@ from core.exceptions import AlreadyRunningError, NotRunningError
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from .MinecraftInstance import SOCKFILE_NAME, MinecraftInstance
-from .ServerProperties import ServerProperties
 
 
 class Server(models.Model):
@@ -93,6 +90,55 @@ class Server(models.Model):
         except Exception:
             return []
 
+    def get_properties(self):
+        """Give server properties."""
+        instance = MinecraftInstance(id=self.pk, version=self.version)
+        filename = os.path.join(instance.directory, 'server.properties')
+        properties = {}
+        try:
+            with open(filename, 'r') as file:
+                lines = file.read().split('\n')
+                for line in lines:
+                    if line.startswith('#'):
+                        continue
+                    try:
+                        key, value = line.split('=')
+                        key = key.replace('-', '_')
+                        properties[key] = value
+                    except ValueError:
+                        pass
+        except Exception:
+            pass
+        return properties
+    
+    def set_properties(self, data):
+        """Update server properties."""
+        instance = MinecraftInstance(id=self.pk, version=self.version)
+        filename = os.path.join(instance.directory, 'server.properties')
+        properties = ''
+        data_keys = data.keys()
+        try:
+            with open(filename, 'r') as file:
+                lines = file.read().split('\n')
+                for line in lines:
+                    if line.startswith('#'):
+                        properties += line + '\n'
+                        continue
+                    try:
+                        key, value = line.split('=')
+                        key_adapted = key.replace('-', '_')
+                        if key_adapted in data_keys:
+                            properties += '%s=%s\n' % (key, data[key_adapted])
+                        else:
+                            properties += line + '\n'
+                    except ValueError:
+                        properties += line + '\n'
+        except Exception:
+            pass
+        properties = properties[:-1]
+        with open(filename, 'w') as file:
+            file.write(properties)
+
     def op(self, nickname):
         """Make administrator a player."""
         self._send_command('command:op %s' % nickname)
@@ -118,11 +164,3 @@ class Server(models.Model):
         )
         instance.delete_data()
         super().delete(*args, **kwargs)
-
-
-@receiver(post_save, sender=Server)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        ServerProperties.objects.create(
-            server=instance,
-        )

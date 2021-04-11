@@ -4,7 +4,7 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
 from django.core.exceptions import PermissionDenied
 
 from .forms import ServerForm, PropertiesForm, PermissionForm
-from .models import Server, ServerProperties
+from .models import Server
 
 
 # Decorators
@@ -91,17 +91,15 @@ def edit(request, id):
 @owner_expected
 def properties(request, id):
     server = get_object_or_404(Server, pk=id)
-    properties = get_object_or_404(ServerProperties, server=server)
+    properties = server.get_properties()
     form = PropertiesForm(
-        data=request.POST or None,
+        data=request.POST or properties or None,
         label_suffix='',
-        instance=properties,
     )
     success = None
-    if request.method == 'POST':
-        if form.has_changed() and form.is_valid():
-            form.save()
-            success = True
+    if request.method == 'POST' and form.has_changed() and form.is_valid():
+        server.set_properties(form.cleaned_data)
+        success = True
 
     context = {
         'server': server,
