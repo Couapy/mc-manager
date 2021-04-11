@@ -20,14 +20,14 @@ def owner_expected(function):
 # Views
 def index(request):
     context = {}
-    return render(request, 'main/index.html', context)
+    return render(request, 'core/index.html', context)
 
 
 def public_servers(request):
     context = {
         'servers': Server.objects.filter(public=True)
     }
-    return render(request, 'main/list.html', context)
+    return render(request, 'core/list.html', context)
 
 
 @login_required
@@ -39,7 +39,7 @@ def manage(request):
         'start_success': 'start' in request.GET,
         'stop_success': 'stop' in request.GET,
     }
-    return render(request, 'main/manage.html', context)
+    return render(request, 'core/manage.html', context)
 
 
 @login_required
@@ -59,7 +59,7 @@ def add(request):
     context = {
         'form': form,
     }
-    return render(request, 'main/add.html', context)
+    return render(request, 'core/add.html', context)
 
 
 @login_required
@@ -84,7 +84,7 @@ def edit(request, id):
         'success': success,
         'create_success': 'create' in request.GET,
     }
-    return render(request, 'main/settings/edit.html', context)
+    return render(request, 'core/settings/edit.html', context)
 
 
 @login_required
@@ -109,7 +109,7 @@ def properties(request, id):
         'form': form,
         'success': success,
     }
-    return render(request, 'main/settings/properties.html', context)
+    return render(request, 'core/settings/properties.html', context)
 
 
 @login_required
@@ -127,7 +127,7 @@ def permissions(request, id):
         'success': success,
         'ops': server.get_ops(),
     }
-    return render(request, 'main/settings/permissions.html', context)
+    return render(request, 'core/settings/permissions.html', context)
 
 
 @login_required
