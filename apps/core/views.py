@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
                               reverse)
 from django.core.exceptions import PermissionDenied
+from django.views.generic import TemplateView
 
 from .forms import ServerForm, PropertiesForm, PermissionForm
 from .models import Server
@@ -18,9 +19,8 @@ def owner_expected(function):
 
 
 # Views
-def index(request):
-    context = {}
-    return render(request, 'core/index.html', context)
+class Index(TemplateView):
+    template_name = "core/index.html"
 
 
 def public_servers(request):

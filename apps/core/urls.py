@@ -5,7 +5,7 @@ from . import views
 
 app_name = "core"
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.Index.as_view(), name='index'),
     path('public-servers/', views.public_servers, name="public-servers"),
     path('manage/', views.manage, name='manage'),
     path('server/add/', views.add, name="add"),
