@@ -1,0 +1,15 @@
+.git
+.githooks
+.github
+.venv
+deploy
+docs
+.dockerignore
+.gitignore
+Docker-compose.yml
+Dockerfile
+LICENCE
+Makefile
+README.md
+var
+var_db
