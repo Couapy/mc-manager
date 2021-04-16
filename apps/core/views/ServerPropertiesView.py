@@ -27,6 +27,7 @@ class ServerPropertiesView(View):
         context = {
             'server': server,
             'form': form,
+            'properties_created': properties is not None,
         }
         return render(request, 'core/settings/properties.html', context)
 

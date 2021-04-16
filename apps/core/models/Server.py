@@ -114,7 +114,7 @@ class Server(models.Model):
                     except ValueError:
                         pass
         except Exception:
-            pass
+            return None
         return properties
     
     def set_properties(self, data):

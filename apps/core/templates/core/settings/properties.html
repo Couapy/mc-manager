@@ -6,7 +6,14 @@
 
 {% block body %}
     <h2>Paramètres internes du serveur</h2>
+    {% if properties_created %}
     <div class="mb-4">
         {% crispy form %}
     </div>
+    {% else %}
+    <div class="alert alert-warning" role="alert">
+        Le fichier <code>server.properties</code> n'a pas encore été généré.<br>
+        Générez-le en lançant le serveur au moins une fois.
+    </div>
+    {% endif %}
 {% endblock body %}
