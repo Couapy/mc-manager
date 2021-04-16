@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from .MinecraftInstance import SOCKFILE_NAME, MinecraftInstance
+from .ServerShare import ServerShare
 
 
 class Server(models.Model):
@@ -46,6 +47,11 @@ class Server(models.Model):
         blank=True,
         null=True,
     )
+
+    @property
+    def shares(self):
+        """Give all server shares."""
+        return ServerShare.objects.filter(server=self)
 
     def _send_command(self, command=''):
         """Send a command to the server instance."""

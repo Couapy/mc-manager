@@ -41,4 +41,4 @@ class ServerCreateView(View):
                 level=messages.ERROR,
                 message='Le formulaire est incorrect.',
             )
-        self.get(request)
+        return self.get(request)

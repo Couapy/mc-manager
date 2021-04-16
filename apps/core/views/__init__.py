@@ -6,5 +6,8 @@ from .ServerListView import ServerListView
 from .ServerManageView import ServerManageView
 from .ServerPermissionView import ServerPermissionView
 from .ServerPropertiesView import ServerPropertiesView
+from .ServerShareDeleteView import ServerShareDeleteView
+from .ServerShareEditView import ServerShareEditView
+from .ServerSharesView import ServerSharesView
 from .ServerStartView import ServerStartView
 from .ServerStopView import ServerStopView

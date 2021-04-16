@@ -1,0 +1,24 @@
+{% extends 'core/settings.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}Partage du serveur{% endblock title %}
+
+{% block body %}
+<div class="mb-4">
+    <h2>Modification d'un partage</h2>
+    <p>
+        Utilisateur sélectionné : {{ user_share }}
+    </p>
+    {% crispy form %}
+</div>
+<div class="mb-4">
+    <h2>Supprimer le partage</h2>
+    <p>
+        Attention, cette action n'est pas réversible.
+    </p>
+    <a href="{% url 'core:share-delete' share.pk %}" class="btn btn-danger" onclick="confirm('Etes-vous sûr de vouloir supprimer ce serveur ?')">
+        Supprimer le partage
+    </a>
+</div>
+{% endblock body %}

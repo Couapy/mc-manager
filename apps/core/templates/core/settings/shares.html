@@ -1,0 +1,53 @@
+{% extends 'core/settings.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}Partage du serveur{% endblock title %}
+
+{% block body %}
+<h2>Ajout d'un partage</h2>
+<div class="mb-4">
+    {% crispy form %}
+</div>
+<h2>Gestion des partages</h2>
+<div class="mb-4">
+    {% if server.shares.all %}
+    <div class="mt-3">
+        <p>
+            Des partages ont déjà été définis :
+        </p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Utilisateur</th>
+                    <th scope="col">Gestion</th>
+                    <th scope="col">Propriétés</th>
+                    <th scope="col">Partages</th>
+                    <th scope="col">Console</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for share in server.shares.all %}
+                <tr>
+                    <td>{{ share.user.username }}</td>
+                    <td>{% if share.manage %}oui{% else %}non{% endif %}</td>
+                    <td>{% if share.properties %}oui{% else %}non{% endif %}</td>
+                    <td>{% if share.administrators %}oui{% else %}non{% endif %}</td>
+                    <td>{% if share.console %}oui{% else %}non{% endif %}</td>
+                    <td>
+                        <a href="{% url 'core:share-edit' share.pk %}">Editer</a> - 
+                        <a href="{% url 'core:share-delete' share.pk %}" onclick="confirm('Etes-vous sûr de vouloir supprimer ce partage ?')">Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        Aucun partage existe pour ce serveur.
+    </div>
+    {% endif %}
+</div>
+{% endblock body %}
