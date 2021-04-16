@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from socket import AF_UNIX, SOCK_DGRAM, socket
 
@@ -6,13 +7,15 @@ from core.exceptions import AlreadyRunningError, NotRunningError
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from PIL import Image
 
+from .functions import image_upload_to
 from .MinecraftInstance import SOCKFILE_NAME, MinecraftInstance
 from .ServerShare import ServerShare
 
 
 class Server(models.Model):
-    """This is the model for a server."""
+    """Minecraft server model."""
 
     name = models.CharField(
         verbose_name="Nom",
@@ -44,6 +47,7 @@ class Server(models.Model):
     )
     image = models.ImageField(
         verbose_name="Icone",
+        upload_to=image_upload_to,
         blank=True,
         null=True,
     )
@@ -64,6 +68,31 @@ class Server(models.Model):
         sock.send(command.encode('utf-8'))
         sock.close()
 
+    def save(self, *args, **kwargs):
+        """
+        Save the server properties.
+
+        It also copy new image to server sources as server-icon.
+        The image may be converted to PNG.
+        """
+        super().save(*args, **kwargs)
+
+        if self.image:
+            logging.error('IMAGE')
+            image = Image.open(self.image.path)
+            width, height = image.width, image.height
+            logging.error(width)
+            logging.error(height)
+            if (width > 64 or height > 64):
+                filepath = os.path.join(
+                    settings.MINECRAFT_DATA_ROOT % self.pk,
+                    'server-icon.png'
+                )
+                image.thumbnail((64, 64))
+                image.save(filepath, 'PNG')
+        else:
+            logging.error('NO_IMAGE')
+    
     def get_status(self):
         """
         Give current status of the server instance.
@@ -116,7 +145,7 @@ class Server(models.Model):
         except Exception:
             return None
         return properties
-    
+
     def set_properties(self, data):
         """Update server properties."""
         instance = MinecraftInstance(id=self.pk, version=self.version)
@@ -164,6 +193,7 @@ class Server(models.Model):
         self._send_command('action:close')
 
     def delete(self, *args, **kwargs):
+        """Delete server and his data."""
         instance = MinecraftInstance(
             id=self.pk,
             version=self.version,

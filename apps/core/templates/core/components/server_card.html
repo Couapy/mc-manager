@@ -1,8 +1,8 @@
 {% load static %}
 <div class="col mb-4">
     <div class="card">
-        {% if server.get_image %}
-        <img src="{{ server.get_image }}" class="card-img-top" alt="Server icon">
+        {% if server.image %}
+        <img src="{{ server.image.url }}" class="card-img-top" alt="Server icon">
         {% else %}
         <img src="{% static 'img/default_favicon.jpeg' %}" class="card-img-top" alt="Server icon">
         {% endif %}
