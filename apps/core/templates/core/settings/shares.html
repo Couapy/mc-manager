@@ -36,8 +36,8 @@
                     <td>{% if share.administrators %}oui{% else %}non{% endif %}</td>
                     <td>{% if share.console %}oui{% else %}non{% endif %}</td>
                     <td>
-                        <a href="{% url 'core:share-edit' share.pk %}">Editer</a> - 
-                        <a href="{% url 'core:share-delete' share.pk %}" onclick="confirm('Etes-vous sûr de vouloir supprimer ce partage ?')">Supprimer</a>
+                        <a href="{% url 'core:share-edit' server.pk share.pk %}">Editer</a> - 
+                        <a href="{% url 'core:share-delete' server.pk share.pk %}" onclick="confirm('Etes-vous sûr de vouloir supprimer ce partage ?')">Supprimer</a>
                     </td>
                 </tr>
                 {% endfor %}

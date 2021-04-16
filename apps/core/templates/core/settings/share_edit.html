@@ -17,7 +17,7 @@
     <p>
         Attention, cette action n'est pas réversible.
     </p>
-    <a href="{% url 'core:share-delete' share.pk %}" class="btn btn-danger" onclick="confirm('Etes-vous sûr de vouloir supprimer ce serveur ?')">
+    <a href="{% url 'core:share-delete' server.pk share.pk %}" class="btn btn-danger" onclick="confirm('Etes-vous sûr de vouloir supprimer ce serveur ?')">
         Supprimer le partage
     </a>
 </div>

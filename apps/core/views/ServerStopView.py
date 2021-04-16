@@ -5,11 +5,11 @@ from django.shortcuts import HttpResponseRedirect, get_object_or_404, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from .decorators import owner_expected
+from .decorators import CheckServerAuthorization
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(owner_expected, name='dispatch')
+@method_decorator(CheckServerAuthorization(manage=True), name='dispatch')
 class ServerStopView(View):
     """This is the stop view."""
 

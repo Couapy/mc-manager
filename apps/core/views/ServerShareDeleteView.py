@@ -13,8 +13,8 @@ from .decorators import owner_expected
 class ServerShareDeleteView(View):
     """This is the server share delete view."""
 
-    def get(self, request, id: int):
-        share = get_object_or_404(ServerShare, pk=id)
+    def get(self, request, id: int, share_id: int):
+        share = get_object_or_404(ServerShare, pk=share_id)
         share.delete()
         messages.add_message(
             request=request,

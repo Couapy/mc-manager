@@ -1,12 +1,18 @@
 from core.forms import ServerShareForm
 from core.models import Server, ServerShare
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
                               reverse)
+from django.utils.decorators import method_decorator
 from django.views import View
 
+from .decorators import CheckServerAuthorization
 
+
+@method_decorator(login_required, name='dispatch')
+@method_decorator(CheckServerAuthorization(administrators=True), name='dispatch')
 class ServerSharesView(View):
     """This is the share view."""
 
