@@ -21,7 +21,7 @@ class ServerPropertiesView(View):
         server = get_object_or_404(Server, pk=id)
         properties = server.get_properties()
         form = PropertiesForm(
-            data=properties,
+            data=request.POST or properties,
             label_suffix='',
         )
         context = {
@@ -47,10 +47,11 @@ class ServerPropertiesView(View):
                     level=messages.WARNING,
                     message='Vous devez redémarrer le serveur pour les prendre en compte.',
                 )
+            return HttpResponseRedirect(reverse('core:properties', args=[id]))
         else:
             messages.add_message(
                 request=request,
                 level=messages.ERROR,
                 message='Le formulaire est incorrect.',
             )
-        return HttpResponseRedirect(reverse('core:properties', args=[id]))
+            return self.get(request, id)

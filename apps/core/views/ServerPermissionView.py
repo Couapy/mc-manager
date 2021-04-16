@@ -19,7 +19,9 @@ class ServerPermissionView(View):
 
     def get(self, request, id: int):
         server = get_object_or_404(Server, pk=id)
-        form = PermissionForm()
+        form = PermissionForm(
+            data=request.POST or None,
+        )
         context = {
             'server': server,
             'form': form,
@@ -52,11 +54,5 @@ class ServerPermissionView(View):
                     level=messages.ERROR,
                     message='Le serveur est à l\'arrêt. Impossible de traiter la demande',
                 )
-        else:
-            messages.add_message(
-                request=request,
-                level=messages.ERROR,
-                message='Le formulaire est incorrect.',
-            )
-        return HttpResponseRedirect(reverse('core:permissions', args=[id]))
+        return self.get(request, id)
         

@@ -18,7 +18,9 @@ class ServerSharesView(View):
 
     def get(self, request, id):
         server = get_object_or_404(Server, pk=id)
-        form = ServerShareForm(data=None)
+        form = ServerShareForm(
+            data=request.POST or None,
+        )
         context = {
             'server': server,
             'form': form,
@@ -54,11 +56,4 @@ class ServerSharesView(View):
                     level=messages.INFO,
                     message='Le partage a bien été créé.',
                 )
-            return HttpResponseRedirect(reverse('core:shares', args=[id]))
-        else:
-            messages.add_message(
-                request=request,
-                level=messages.ERROR,
-                message='Le formulaire est incorrect.',
-            )
         return self.get(request, id)

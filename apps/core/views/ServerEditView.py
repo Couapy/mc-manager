@@ -9,7 +9,7 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from .decorators import owner_expected, CheckServerAuthorization
+from .decorators import CheckServerAuthorization, owner_expected
 
 
 @method_decorator(login_required, name='dispatch')
@@ -20,7 +20,7 @@ class ServerEditView(View):
     def get(self, request, id: int):
         server = get_object_or_404(Server, pk=id)
         form = ServerForm(
-            data=None,
+            data=request.POST or None,
             instance=server,
         )
         context = {
@@ -34,7 +34,6 @@ class ServerEditView(View):
         form = ServerForm(
             data=request.POST or None,
             files=request.FILES or None,
-            label_suffix='',
             instance=server,
         )
         if form.has_changed() and form.is_valid():
@@ -42,12 +41,6 @@ class ServerEditView(View):
             messages.add_message(
                 request=request,
                 level=messages.INFO,
-                message='Les paramètres du serveur on bien été enregistrés.',
+                message='Les paramètres du serveur ont bien été enregistrés.',
             )
-        elif form.has_changed():
-            messages.add_message(
-                request=request,
-                level=messages.ERROR,
-                message='Le formulaire est incorrect.',
-            )
-        return HttpResponseRedirect(reverse('core:edit', args=[id]))
+        return self.get(request, id)
