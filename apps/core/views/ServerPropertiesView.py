@@ -9,11 +9,11 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from .decorators import CheckServerAuthorization
+from core.decorators import CheckServerAuthorization
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(CheckServerAuthorization(properties=True), name='dispatch')
+@method_decorator(CheckServerAuthorization('properties'), name='dispatch')
 class ServerPropertiesView(View):
     """This is the properties view."""
 

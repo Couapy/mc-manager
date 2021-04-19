@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 from socket import AF_UNIX, SOCK_DGRAM, socket
 
@@ -57,6 +56,24 @@ class Server(models.Model):
         """Give all server shares."""
         return ServerShare.objects.filter(server=self)
 
+    def is_authorized(self, user, controls=[]):
+        """
+        Check if the user can access to this instance of server.
+
+        Please see to the ServerShare model.
+        """
+        if len(controls) == 0:
+            return False
+        if self.owner.pk != user.pk:
+            try:
+                share = ServerShare.objects.get(user=user)
+            except self.DoesNotExist:
+                return False
+            for control in controls:
+                if not getattr(share, control):
+                    return False
+        return True
+
     def _send_command(self, command=''):
         """Send a command to the server instance."""
         if self.get_status() == 0:
@@ -78,11 +95,8 @@ class Server(models.Model):
         super().save(*args, **kwargs)
 
         if self.image:
-            logging.error('IMAGE')
             image = Image.open(self.image.path)
             width, height = image.width, image.height
-            logging.error(width)
-            logging.error(height)
             if (width > 64 or height > 64):
                 filepath = os.path.join(
                     settings.MINECRAFT_DATA_ROOT % self.pk,
@@ -90,8 +104,6 @@ class Server(models.Model):
                 )
                 image.thumbnail((64, 64))
                 image.save(filepath, 'PNG')
-        else:
-            logging.error('NO_IMAGE')
     
     def get_status(self):
         """

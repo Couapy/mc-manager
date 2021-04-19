@@ -8,11 +8,11 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from .decorators import CheckServerAuthorization
+from core.decorators import CheckServerAuthorization
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(CheckServerAuthorization(administrators=True), name='dispatch')
+@method_decorator(CheckServerAuthorization('administrators'), name='dispatch')
 class ServerSharesView(View):
     """This is the share view."""
 

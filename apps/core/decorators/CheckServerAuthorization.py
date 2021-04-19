@@ -9,7 +9,7 @@ class CheckServerAuthorization:
 
     def __init__(self, *args, **kwargs):
         self.func = None
-        self.controls = kwargs
+        self.controls = args
 
     def __call__(self, *args, **kwargs):
         """Give the function wrapper."""
@@ -23,6 +23,9 @@ class CheckServerAuthorization:
         
         Execute the route if the request user is the server owner,
         or the server owner shares the server with him.
+
+        If the user isn't allowed to access the route, an HTTP 403 error is
+        throwed.
         """
         request = args[0]
         server_id = kwargs['id']
@@ -30,15 +33,11 @@ class CheckServerAuthorization:
             server = Server.objects.get(pk=server_id)
         except Server.DoesNotExist:
             return HttpResponseNotFound()
-        if server.owner.pk != request.user.pk:
-            try:
-                share = ServerShare.objects.get(user=request.user)
-            except ServerShare.DoesNotExist:
-                return HttpResponseForbidden()
-            if len(self.controls) == 0:
-                return HttpResponseForbidden()
-            for key in self.controls.keys():
-                if getattr(share, key) != self.controls[key]:
-                    return HttpResponseForbidden()
-        return self.func(*args, **kwargs)
-    
+        
+        if server.is_authorized(
+            user=request.user,
+            controls=self.controls
+        ):
+            return self.func(*args, **kwargs)
+        else:
+            return HttpResponseForbidden()

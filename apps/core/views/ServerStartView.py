@@ -6,11 +6,11 @@ from django.shortcuts import HttpResponseRedirect, get_object_or_404, reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from .decorators import CheckServerAuthorization
+from core.decorators import CheckServerAuthorization
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(CheckServerAuthorization(manage=True), name='dispatch')
+@method_decorator(CheckServerAuthorization('manage'), name='dispatch')
 class ServerStartView(View):
     """This is the start view."""
 

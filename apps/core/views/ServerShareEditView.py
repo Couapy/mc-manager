@@ -1,11 +1,16 @@
+from core.decorators import CheckServerAuthorization
 from core.forms import ServerShareEditForm
 from core.models import Server, ServerShare
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
                               reverse)
+from django.utils.decorators import method_decorator
 from django.views import View
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(CheckServerAuthorization('administrators'), name='dispatch')
 class ServerShareEditView(View):
     """This is the share edit view."""
 

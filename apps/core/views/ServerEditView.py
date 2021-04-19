@@ -9,11 +9,11 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404, render,
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from .decorators import CheckServerAuthorization, owner_expected
+from core.decorators import CheckServerAuthorization, owner_expected
 
 
 @method_decorator(login_required, name='dispatch')
-@method_decorator(CheckServerAuthorization(manage=True), name='dispatch')
+@method_decorator(CheckServerAuthorization('manage'), name='dispatch')
 class ServerEditView(View):
     """This is the server edit view."""
 
