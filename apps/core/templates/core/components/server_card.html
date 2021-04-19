@@ -1,4 +1,9 @@
 {% load static %}
+{% load is_authorized %}
+{% is_authorized 'manage' as manage_permission %}
+{% is_authorized 'properties' as properties_permission %}
+{% is_authorized 'administrators' as administrators_permission %}
+{% is_authorized 'console' as console_permission %}
 <div class="col mb-4">
     <div class="card">
         {% if server.image %}
@@ -12,12 +17,19 @@
                 {{ server.description }}<br>
                 <small>Version : {{ server.version }}</small>
             </p>
-            {% if user == server.owner %}
+            {% if manage_permission %}
             <a href="{% url 'core:edit' server.pk %}" class="btn btn-primary">Paramétrer</a>
             {% if server.get_status %}
             <a href="{% url 'core:stop' server.pk %}" class="btn btn-danger">Eteindre</a>
             {% else %}
             <a href="{% url 'core:start' server.pk %}" class="btn btn-success">Démarrer</a>
+            {% endif %}
+            {% else %}
+            {% if properties_permission %}
+            <a href="{% url 'core:properties' server.pk %}" class="btn btn-secondary">Paramétrer</a>
+            {% endif %}
+            {% if administrators_permission %}
+            <a href="{% url 'core:shares' server.pk %}" class="btn btn-secondary">Gérer les partages</a>
             {% endif %}
             {% endif %}
         </div>

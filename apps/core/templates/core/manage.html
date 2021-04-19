@@ -6,16 +6,28 @@
 {% block head %}{% endblock head %}
 
 {% block content %}
-    <div class="text-right pb-3">
-        <a href="{% url 'core:add' %}" class="btn btn-primary">+ Ajouter un serveur</a>
-    </div>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
-        {% if servers %}
-            {% for server in servers %}
-                {% include 'core/components/server_card.html' %}
-            {% endfor %}
-        {% else %}
-            <p>Vous ne possédez aucun serveur.</p>
-        {% endif %}
-    </div>
+<div class="text-right pb-3">
+    <a href="{% url 'core:add' %}" class="btn btn-primary">+ Ajouter un serveur</a>
+</div>
+<h1>Liste des serveurs</h1>
+<h2>Mes serveurs</h2>
+{% if servers %}
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+    {% for server in servers %}
+    {% include 'core/components/server_card.html' %}
+    {% endfor %}
+</div>
+{% else %}
+<p>Vous ne possédez aucun serveur.</p>
+{% endif %}
+<h2>Serveurs partagés avec moi</h2>
+{% if shared_servers %}
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+    {% for server in shared_servers %}
+    {% include 'core/components/server_card.html' %}
+    {% endfor %}
+</div>
+{% else %}
+<p>Aucun serveur n'a été partagé avec vous.</p>
+{% endif %}
 {% endblock content %}
