@@ -6,12 +6,15 @@ from core.exceptions import AlreadyRunningError, NotRunningError
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from PIL import Image
 
+from .functions import image_upload_to
 from .MinecraftInstance import SOCKFILE_NAME, MinecraftInstance
+from .ServerShare import ServerShare
 
 
 class Server(models.Model):
-    """This is the model for a server."""
+    """Minecraft server model."""
 
     name = models.CharField(
         verbose_name="Nom",
@@ -43,9 +46,33 @@ class Server(models.Model):
     )
     image = models.ImageField(
         verbose_name="Icone",
+        upload_to=image_upload_to,
         blank=True,
         null=True,
     )
+
+    @property
+    def shares(self):
+        """Give all server shares."""
+        return ServerShare.objects.filter(server=self)
+
+    def is_authorized(self, user, controls=[]):
+        """
+        Check if the user can access to this instance of server.
+
+        Please see to the ServerShare model.
+        """
+        if len(controls) == 0:
+            return False
+        if self.owner.pk != user.pk:
+            try:
+                share = ServerShare.objects.get(user=user)
+            except self.DoesNotExist:
+                return False
+            for control in controls:
+                if not getattr(share, control):
+                    return False
+        return True
 
     def _send_command(self, command=''):
         """Send a command to the server instance."""
@@ -58,6 +85,26 @@ class Server(models.Model):
         sock.send(command.encode('utf-8'))
         sock.close()
 
+    def save(self, *args, **kwargs):
+        """
+        Save the server properties.
+
+        It also copy new image to server sources as server-icon.
+        The image may be converted to PNG.
+        """
+        super().save(*args, **kwargs)
+
+        if self.image:
+            image = Image.open(self.image.path)
+            width, height = image.width, image.height
+            if (width > 64 or height > 64):
+                filepath = os.path.join(
+                    settings.MINECRAFT_DATA_ROOT % self.pk,
+                    'server-icon.png'
+                )
+                image.thumbnail((64, 64))
+                image.save(filepath, 'PNG')
+    
     def get_status(self):
         """
         Give current status of the server instance.
@@ -96,8 +143,8 @@ class Server(models.Model):
         filename = os.path.join(instance.directory, 'server.properties')
         properties = {}
         try:
-            with open(filename, 'r') as file:
-                lines = file.read().split('\n')
+            with open(filename, 'rb') as file:
+                lines = file.read().decode('iso-8859-1').split('\n')
                 for line in lines:
                     if line.startswith('#'):
                         continue
@@ -107,10 +154,10 @@ class Server(models.Model):
                         properties[key] = value
                     except ValueError:
                         pass
-        except Exception:
-            pass
+        except Exception as e:
+            return None
         return properties
-    
+
     def set_properties(self, data):
         """Update server properties."""
         instance = MinecraftInstance(id=self.pk, version=self.version)
@@ -136,8 +183,8 @@ class Server(models.Model):
         except Exception:
             pass
         properties = properties[:-1]
-        with open(filename, 'w') as file:
-            file.write(properties)
+        with open(filename, 'wb') as file:
+            file.write(properties.encode('iso-8859-1'))
 
     def op(self, nickname):
         """Make administrator a player."""
@@ -158,6 +205,7 @@ class Server(models.Model):
         self._send_command('action:close')
 
     def delete(self, *args, **kwargs):
+        """Delete server and his data."""
         instance = MinecraftInstance(
             id=self.pk,
             version=self.version,

@@ -1,3 +1,4 @@
+import mcdwld
 from core.models import Server
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
@@ -28,7 +29,9 @@ class ServerForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(forms.ModelForm, self).__init__(*args, **kwargs)
 
-        versions_installed = settings.MINECRAFT_SERVERS_LOCAL
+        versions_installed = mcdwld.get_local_versions(
+            directory=settings.MINECRAFT_DOWNLOAD_ROOT
+        )
         version_choices = []
         for version in versions_installed:
             version_choices.append((version, version))

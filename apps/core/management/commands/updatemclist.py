@@ -19,7 +19,7 @@ class Command(BaseCommand):
             'Downloading %d versions in progress, it can take a while...' % len(versions)))
         mcdwld.download_versions(
             versions,
-            settings.MINECRAFT_ROOT
+            settings.MINECRAFT_DOWNLOAD_ROOT
         )
         self.stdout.write(self.style.SUCCESS(
             'Successfully downloaded servers.'))

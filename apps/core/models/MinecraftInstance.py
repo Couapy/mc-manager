@@ -159,4 +159,5 @@ class MinecraftInstance(Thread):
     def delete_data(self):
         """Delete all data about this minecraft server instance."""
         self.stop()
-        rmtree(self.directory)
+        if os.path.exists(self.directory):
+            rmtree(self.directory)
