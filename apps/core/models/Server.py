@@ -143,8 +143,8 @@ class Server(models.Model):
         filename = os.path.join(instance.directory, 'server.properties')
         properties = {}
         try:
-            with open(filename, 'r') as file:
-                lines = file.read().split('\n')
+            with open(filename, 'rb') as file:
+                lines = file.read().decode('iso-8859-1').split('\n')
                 for line in lines:
                     if line.startswith('#'):
                         continue
@@ -154,7 +154,7 @@ class Server(models.Model):
                         properties[key] = value
                     except ValueError:
                         pass
-        except Exception:
+        except Exception as e:
             return None
         return properties
 
@@ -183,8 +183,8 @@ class Server(models.Model):
         except Exception:
             pass
         properties = properties[:-1]
-        with open(filename, 'w') as file:
-            file.write(properties)
+        with open(filename, 'wb') as file:
+            file.write(properties.encode('iso-8859-1'))
 
     def op(self, nickname):
         """Make administrator a player."""
