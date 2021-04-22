@@ -1,32 +1,29 @@
 version: "3.9"
-
+   
 services:
-  web:
-    build: .
-    command: >
-      bash -c "python manage.py migrate --noinput && daphne project.asgi:application -b 0.0.0.0 -p 8000"
-    ports:
-      - 8000:8000
-    depends_on:
-      - db
-    volumes:
-      - ./var:/app/var
-  db:
+  postgres:
     image: postgres
+    volumes:
+      - vardb:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=mcmanager
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+  daphne:
+    build: .
+    command: bash -c "python manage.py migrate && daphne project.asgi:application -b 0.0.0.0 -p 8000"
+    restart: always
     volumes:
-      - vardb:/var/lib/postgresql/data
+      - .:/app:delegated
     ports:
-      - 5432:5432
+      - "8000:8000"
+      - "25565-25600:25565-25600"
+    depends_on:
+      - postgres
 
 volumes:
   var:
     driver: local
   vardb:
     driver: local
-
-networks:
-  dev:
+  
