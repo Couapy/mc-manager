@@ -4,14 +4,17 @@ services:
   postgres:
     image: postgres
     volumes:
-      - vardb:/var/lib/postgresql/data
+      - ./vardb:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=mcmanager
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   daphne:
     build: .
-    command: bash -c "python manage.py migrate && daphne project.asgi:application -b 0.0.0.0 -p 8000"
+    command: >
+      bash -c "python manage.py migrate --noinput &&
+      python manage.py collectstatic --noinput &&
+      daphne project.asgi:application -b 0.0.0.0 -p 8000"
     restart: always
     volumes:
       - .:/app:delegated
