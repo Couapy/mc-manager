@@ -3,7 +3,15 @@
 [![Django Units tests](https://github.com/Couapy/mc-manager/actions/workflows/unit-test.yml/badge.svg)](https://github.com/Couapy/mc-manager/actions/workflows/unit-test.yml)
 [![MIT License](https://img.shields.io/badge/license-MIT-red.svg)](https://github.com/5kyc0d3r/upnpy/blob/master/LICENSE)
 
-Minecraft Server Web Interface
+This is a web manager for Minecraft servers. The instances of Minecraft Servers are executed on the same device.
+
+## Why this project ?
+
+This project solves an issue I had with friends during gaming evenings :
+I own a personal server that runs minecraft servers to play with friends, but when they needed to
+create or started a server, I had to connect myself by ssh and run commands.
+
+So I wanted to code a web manager that allow my friends and myself to administrate Minecraft servers easily.
 
 ## Install
 
@@ -13,56 +21,22 @@ Follow this instructions to install the project :
 # Clone repository
 git clone https://github.com/Couapy/mc-manager.git
 
-# Install dependencies
-virtualenv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+# Execute
+docker-compose up --build
 
 # Download servers
-python manage.py updatemclist
+docker exec daphne python manage.py updatemclist
 ```
 
-### Create user minecraft
+## Configuration
 
-To create the minecraft user, please run :
+All configuration is available in the `config.cfg` file.
 
-> adduser --system --shell /bin/bash --home /opt/minecraft --group minecraft
+**Please generate a secret for django before send application in production !**
 
-### Add servers
+The config file provide settings for :
 
-> mkdir /opt/minecraft/servers
-
-Place the servers in `/opt/minecraft/servers/`
-
-### Create minecraft service
-
-Copy the service to the systemd service folder :
-
-> cp MC-Handler/minecraft/minecraft@.service /etc/systemd/system/minecraft@.service
-
-### Install the website
-
-Its depends on yours system : apache or nginx.
-
-So I let you apply your skills ;), the website root is **MC-Handler/mchandler/**.
-
-You must create a config file **config.cfg** like this :
-
-```ini
-[DJANGO]
-SECRET_KEY = your_key_here
-
-[GOOGLE]
-KEY = your_key_here
-SECRET = your_secret_key_here
-
-[GITHUB]
-KEY = your_key_here
-SECRET = your_secret_key_here
-```
-
-### Give permissions
-
-Add this ligne to `/etc/sudoers` (the user can be different, be carful)
-
-> www-data ALL=(ALL) NOPASSWD:ALL
+* Django
+* Minecraft server instances (RAM & versions availables)
+* Mails
+* OAuth providers
