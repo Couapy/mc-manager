@@ -37,7 +37,7 @@ service-identity==18.1.0
 six==1.15.0
 social-auth-app-django==4.0.0
 social-auth-core==4.1.0
-sqlparse==0.4.1
+sqlparse==0.4.2
 toml==0.10.2
 Twisted==21.2.0
 txaio==21.2.1
