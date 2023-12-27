@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "mc-manager"
+version = "0.2.0"
+description = ""
+authors = ["Maël Marchand <contact@marchand.work>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.6"
+daphne = "^4.0.0"
+django-crispy-forms = "^2.0"
+mc-downloader = "^0.0.5"
+pillow = "^10.0.1"
+psycopg2 = "^2.9.9"
+social-auth-app-django = "^5.3.0"
+crispy-bootstrap4 = "^2022.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

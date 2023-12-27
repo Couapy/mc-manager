@@ -1,32 +1,65 @@
 version: "3.9"
-   
+
 services:
   postgres:
+    container_name: mc_manager_db
     image: postgres
     volumes:
-      - ./vardb:/var/lib/postgresql/data
+      - database:/var/lib/postgresql/data
+    networks:
+      - default
     environment:
       - POSTGRES_DB=mcmanager
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-  daphne:
-    build: .
-    command: >
-      bash -c "python manage.py migrate --noinput &&
-      python manage.py collectstatic --noinput &&
-      daphne project.asgi:application -b 0.0.0.0 -p 8000"
-    restart: always
-    volumes:
-      - .:/app:delegated
-    ports:
-      - "8000:8000"
-      - "25565-25600:25565-25600"
+
+  django: &django
+    container_name: mc_manager
+    build:
+      context: .
+      dockerfile: Dockerfile
+    deploy:
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          cpus: "2"
+          memory: 6G
+        reservations:
+          cpus: ".1"
+          memory: 256M
     depends_on:
       - postgres
+    networks:
+      - default
+      - traefik
+    volumes:
+      - data:/data
+    ports:
+      - "25565-25600:25565-25600"
+    labels:
+      traefik.enable: true
+      traefik.docker.network: traefik
+      traefik.http.routers.mc_manager.rule: Host(`minecraft.marchand.cloud`)
+      traefik.http.routers.mc_manager.entrypoints: https
+      traefik.http.routers.mc_manager.tls: true
+      traefik.http.routers.mc_manager.tls.certresolver: letsencrypt
+
+  django_migration:
+    <<: *django
+    container_name: mc_manager_migration
+    deploy: {}
+    command: python manage.py migrate
+    volumes: []
+    ports: []
+    labels: {}
+
+networks:
+  default:
+  traefik:
+    external: true
+    name: traefik
 
 volumes:
-  var:
-    driver: local
-  vardb:
-    driver: local
-  
+  data:
+  database:

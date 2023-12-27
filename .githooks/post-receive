@@ -1,8 +1,0 @@
-#!/bin/bash
-
-PYTHON="$(pwd)/.venv/bin/python"
-PIP="$(pwd)/.venv/bin/pip"
-
-$PYTHON manage.py migrate
-$PYTHON manage.py check --deploy
-$PIP -U -r requirements.txt
